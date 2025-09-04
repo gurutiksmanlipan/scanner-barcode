@@ -603,6 +603,9 @@
                 return;
             }
             
+            // Show scanned code notification first
+            showCodeNotification(barcode);
+            
             // Simulate barcode processing
             const teacherId = barcode.substring(0, 6);
             const classId = barcode.substring(6, 12);
@@ -667,6 +670,47 @@
             updateStats();
         }
 
+        function showCodeNotification(barcode) {
+            // Create notification popup
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg z-50 fade-in';
+            notification.style.zIndex = '9999';
+            
+            const teacherId = barcode.substring(0, 6);
+            const classId = barcode.substring(6, 12);
+            const teacher = teachers[teacherId];
+            const className = classes[classId];
+            
+            let codeInfo = '';
+            if (teacher && className) {
+                codeInfo = `${teacher.name} - Kelas ${className}`;
+            } else {
+                codeInfo = 'Kode tidak dikenali';
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <p class="font-semibold">QR Code Terdeteksi!</p>
+                        <p class="text-sm opacity-90">Kode: ${barcode}</p>
+                        <p class="text-sm opacity-90">${codeInfo}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
         function showStatus(type, title, detail) {
             const statusDiv = document.getElementById('scanStatus');
             const indicator = document.getElementById('statusIndicator');
@@ -720,5 +764,5 @@
         console.log('Bu Rina Kartika - IX-A:', generateDemoBarcode('TCH005', 'CLS005'));
         console.log('Buat QR code dengan data di atas untuk testing!');
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979dba99d28f5653',t:'MTc1Njk5MTQ0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979dc49244b5fd07',t:'MTc1Njk5MTg1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
