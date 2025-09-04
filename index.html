@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scanner Barcode</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f4f4f9;
+      margin: 0;
+      padding: 20px;
+    }
+    .scanner-frame {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      height: 300px;
+      margin: auto;
+      background: #ddd;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 2px solid #444;
+    }
+    video, canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #scanningIndicator {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      display: none;
+    }
+    #result {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: green;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h2>📷 Scanner Barcode / QR</h2>
+
+  <div class="scanner-frame">
+    <video id="cameraVideo" autoplay playsinline></video>
+    <canvas id="scannerCanvas"></canvas>
+    <div id="scanningIndicator">🔍 Sedang memindai...</div>
+  </div>
+
+  <button id="startBtn">Aktifkan Kamera</button>
+  <div id="result">Hasil: <span>-</span></div>
+
+  <!-- Library jsQR -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const video = document.getElementById("cameraVideo");
+    const canvas = document.getElementById("scannerCanvas");
+    const ctx = canvas.getContext("2d");
+    const scanningIndicator = document.getElementById("scanningIndicator");
+    const resultText = document.querySelector("#result span");
+
+    let stream = null;
+    let scanning = false;
+
+    startBtn.addEventListener("click", async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        video.srcObject = stream;
+        scanning = true;
+        scanningIndicator.style.display = "flex";
+        requestAnimationFrame(scanFrame);
+      } catch (err) {
+        alert("Tidak bisa mengakses kamera: " + err);
+      }
+    });
+
+    function scanFrame() {
+      if (!scanning) return;
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, canvas.width, canvas.height, {
+        inversionAttempts: "dontInvert",
+      });
+
+      if (code) {
+        resultText.textContent = code.data;
+        scanningIndicator.style.display = "none";
+        stopCamera();
+      } else {
+        requestAnimationFrame(scanFrame);
+      }
+    }
+
+    function stopCamera() {
+      scanning = false;
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    }
+  </script>
+</body>
+</html>
