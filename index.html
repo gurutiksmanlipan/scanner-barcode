@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Monitoring Guru - EduTrack</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -85,7 +85,7 @@
                         <svg class="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
                         </svg>
-                        Scanner Barcode
+                        Scanner QR Code
                     </h2>
                     
                     <div class="scanner-frame bg-gray-100 h-64 mb-4 flex items-center justify-center relative overflow-hidden">
@@ -107,7 +107,7 @@
                         </div>
                     </div>
                     
-                    <input type="text" id="barcodeInput" placeholder="Atau ketik kode barcode..." 
+                    <input type="text" id="barcodeInput" placeholder="Atau ketik kode QR..." 
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4">
                     
                     <div class="grid grid-cols-2 gap-3 mb-4">
@@ -300,17 +300,18 @@
         });
 
         function initializeBarcodeReader() {
-            try {
-                codeReader = new ZXing.BrowserMultiFormatReader();
-            } catch (error) {
-                console.error('Error initializing barcode reader:', error);
-                showStatus('error', 'Error Scanner', 'Tidak dapat menginisialisasi scanner barcode');
+            // jsQR doesn't need initialization, just check if it's available
+            if (typeof jsQR === 'undefined') {
+                console.error('jsQR library not loaded');
+                showStatus('error', 'Error Scanner', 'Library QR scanner tidak tersedia');
+                return false;
             }
+            return true;
         }
 
         async function startCamera() {
-            if (!codeReader) {
-                showStatus('error', 'Scanner Tidak Tersedia', 'Barcode reader belum diinisialisasi');
+            if (!initializeBarcodeReader()) {
+                showStatus('error', 'Scanner Tidak Tersedia', 'QR code reader tidak tersedia');
                 return;
             }
 
@@ -329,8 +330,8 @@
                 const stream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
                         facingMode: 'environment', // Use back camera if available
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
                     } 
                 });
                 
@@ -351,7 +352,7 @@
                 isScanning = true;
                 startBarcodeDetection();
                 
-                showStatus('success', 'Kamera Aktif', 'Arahkan barcode ke kamera untuk scan otomatis');
+                showStatus('success', 'Kamera Aktif', 'Arahkan QR code ke kamera untuk scan otomatis');
                 
             } catch (error) {
                 console.error('Error accessing camera:', error);
@@ -389,6 +390,10 @@
             placeholder.classList.remove('hidden');
             scanningIndicator.classList.add('hidden');
             
+            // Hide canvas
+            const canvas = document.getElementById('scannerCanvas');
+            canvas.classList.add('hidden');
+            
             // Update button states
             startBtn.disabled = false;
             startBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
@@ -401,14 +406,22 @@
         }
 
         function startBarcodeDetection() {
-            if (!isScanning || !codeReader || !currentStream) return;
+            if (!isScanning || !currentStream) return;
             
             const videoElement = document.getElementById('cameraVideo');
             const canvas = document.getElementById('scannerCanvas');
             const ctx = canvas.getContext('2d');
             
-            function detectBarcode() {
-                if (!isScanning) return;
+            // Show canvas for debugging
+            canvas.classList.remove('hidden');
+            
+            function detectQRCode() {
+                if (!isScanning || !videoElement.videoWidth || !videoElement.videoHeight) {
+                    if (isScanning) {
+                        setTimeout(detectQRCode, 100);
+                    }
+                    return;
+                }
                 
                 try {
                     // Set canvas size to match video
@@ -418,34 +431,42 @@
                     // Draw current video frame to canvas
                     ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
                     
-                    // Get image data for barcode detection
+                    // Get image data for QR code detection
                     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                     
-                    // Try to decode barcode from image data
-                    codeReader.decodeFromImageData(imageData)
-                        .then(result => {
-                            if (result && result.text) {
-                                // Barcode detected!
-                                processBarcodeResult(result.text);
-                                return;
-                            }
-                        })
-                        .catch(error => {
-                            // No barcode found in this frame, continue scanning
-                        });
+                    // Use jsQR to detect QR codes
+                    const qrCode = jsQR(imageData.data, imageData.width, imageData.height, {
+                        inversionAttempts: "dontInvert",
+                    });
+                    
+                    if (qrCode && qrCode.data) {
+                        // Draw detection box for visual feedback
+                        ctx.strokeStyle = '#00ff00';
+                        ctx.lineWidth = 4;
+                        ctx.strokeRect(
+                            qrCode.location.topLeftCorner.x,
+                            qrCode.location.topLeftCorner.y,
+                            qrCode.location.bottomRightCorner.x - qrCode.location.topLeftCorner.x,
+                            qrCode.location.bottomRightCorner.y - qrCode.location.topLeftCorner.y
+                        );
+                        
+                        // QR Code detected!
+                        processBarcodeResult(qrCode.data);
+                        return;
+                    }
                         
                 } catch (error) {
-                    console.error('Error during barcode detection:', error);
+                    console.error('Error during QR code detection:', error);
                 }
                 
-                // Continue scanning
+                // Continue scanning with faster interval
                 if (isScanning) {
-                    requestAnimationFrame(detectBarcode);
+                    setTimeout(detectQRCode, 100); // Scan every 100ms for faster detection
                 }
             }
             
             // Start detection loop
-            requestAnimationFrame(detectBarcode);
+            setTimeout(detectQRCode, 100);
         }
 
         function updateCurrentDate() {
@@ -567,7 +588,7 @@
             const barcode = input.value.trim();
             
             if (!barcode) {
-                showStatus('error', 'Kode barcode tidak boleh kosong', 'Silakan scan atau ketik kode barcode');
+                showStatus('error', 'Kode QR tidak boleh kosong', 'Silakan scan atau ketik kode QR');
                 return;
             }
             
@@ -578,7 +599,7 @@
 
         function processBarcodeData(barcode) {
             if (!barcode) {
-                showStatus('error', 'Kode barcode tidak boleh kosong', 'Silakan scan atau ketik kode barcode');
+                showStatus('error', 'Kode QR tidak boleh kosong', 'Silakan scan atau ketik kode QR');
                 return;
             }
             
@@ -697,6 +718,7 @@
         console.log('Bu Maya Sinta - VIII-A:', generateDemoBarcode('TCH003', 'CLS003'));
         console.log('Pak Budi Santoso - VIII-B:', generateDemoBarcode('TCH004', 'CLS004'));
         console.log('Bu Rina Kartika - IX-A:', generateDemoBarcode('TCH005', 'CLS005'));
+        console.log('Buat QR code dengan data di atas untuk testing!');
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979daec9525bf8f8',t:'MTc1Njk5MDk2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979dba99d28f5653',t:'MTc1Njk5MTQ0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
