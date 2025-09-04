@@ -1,130 +1,700 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scanner Barcode</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f4f4f9;
-      margin: 0;
-      padding: 20px;
-    }
-    .scanner-frame {
-      position: relative;
-      width: 100%;
-      max-width: 400px;
-      height: 300px;
-      margin: auto;
-      background: #ddd;
-      overflow: hidden;
-      border-radius: 12px;
-      border: 2px solid #444;
-    }
-    video, canvas {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    #scanningIndicator {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      display: none;
-    }
-    #result {
-      margin-top: 15px;
-      font-size: 18px;
-      font-weight: bold;
-      color: green;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Monitoring Guru - EduTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .scanner-frame {
+            border: 3px solid #10b981;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #10b981, transparent);
+            animation: scan 2s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-hadir { background-color: #10b981; }
+        .status-keluar { background-color: #f59e0b; }
+        .status-tidak-hadir { background-color: #ef4444; }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body>
-  <h2>📷 Scanner Barcode / QR</h2>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b-4 border-blue-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-500 p-2 rounded-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">EduTrack</h1>
+                        <p class="text-sm text-gray-600">Sistem Monitoring Kehadiran Guru</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-600">Hari ini</p>
+                    <p class="font-semibold text-gray-900" id="currentDate"></p>
+                </div>
+            </div>
+        </div>
+    </header>
 
-  <div class="scanner-frame">
-    <video id="cameraVideo" autoplay playsinline></video>
-    <canvas id="scannerCanvas"></canvas>
-    <div id="scanningIndicator">🔍 Sedang memindai...</div>
-  </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Scanner Section -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                        </svg>
+                        Scanner Barcode
+                    </h2>
+                    
+                    <div class="scanner-frame bg-gray-100 h-64 mb-4 flex items-center justify-center relative overflow-hidden">
+                        <video id="cameraVideo" class="w-full h-full object-cover hidden" autoplay playsinline></video>
+                        <canvas id="scannerCanvas" class="absolute inset-0 w-full h-full hidden"></canvas>
+                        <div class="scanner-line"></div>
+                        <div id="cameraPlaceholder" class="text-center z-10">
+                            <svg class="w-16 h-16 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <p class="text-gray-500 text-sm">Klik tombol untuk mengaktifkan kamera</p>
+                        </div>
+                        <div id="scanningIndicator" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white hidden">
+                            <div class="text-center">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+                                <p class="text-sm">Mencari barcode...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <input type="text" id="barcodeInput" placeholder="Atau ketik kode barcode..." 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4">
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button id="startCameraBtn" onclick="startCamera()" 
+                                class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                            Aktifkan Kamera
+                        </button>
+                        <button id="stopCameraBtn" onclick="stopCamera()" disabled
+                                class="bg-red-500 hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path>
+                            </svg>
+                            Matikan Kamera
+                        </button>
+                    </div>
+                    
+                    <button onclick="processManualBarcode()" 
+                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Proses Manual
+                    </button>
+                    
+                    <!-- Status Display -->
+                    <div id="scanStatus" class="mt-4 p-4 rounded-lg hidden">
+                        <div class="flex items-center">
+                            <div class="status-indicator" id="statusIndicator"></div>
+                            <span id="statusText" class="font-medium"></span>
+                        </div>
+                        <p id="statusDetail" class="text-sm text-gray-600 mt-1"></p>
+                    </div>
+                </div>
+            </div>
 
-  <button id="startBtn">Aktifkan Kamera</button>
-  <div id="result">Hasil: <span>-</span></div>
+            <!-- Schedule & Monitoring -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Today's Schedule -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Jadwal Hari Ini
+                    </h2>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Jam</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Guru</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Mata Pelajaran</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Kelas</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scheduleTable">
+                                <!-- Schedule will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-  <!-- Library jsQR -->
-  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+                <!-- Real-time Monitoring -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="w-6 h-6 text-orange-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        Monitoring Real-time
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="bg-green-500 p-2 rounded-lg">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-green-800">Sedang Mengajar</p>
+                                    <p class="text-2xl font-bold text-green-900" id="activeTeachers">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="bg-yellow-500 p-2 rounded-lg">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-yellow-800">Terlambat</p>
+                                    <p class="text-2xl font-bold text-yellow-900" id="lateTeachers">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="bg-red-500 p-2 rounded-lg">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-red-800">Tidak Hadir</p>
+                                    <p class="text-2xl font-bold text-red-900" id="absentTeachers">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div>
+                        <h3 class="font-semibold text-gray-900 mb-3">Aktivitas Terbaru</h3>
+                        <div id="recentActivity" class="space-y-3 max-h-64 overflow-y-auto">
+                            <!-- Activity will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <script>
-    const startBtn = document.getElementById("startBtn");
-    const video = document.getElementById("cameraVideo");
-    const canvas = document.getElementById("scannerCanvas");
-    const ctx = canvas.getContext("2d");
-    const scanningIndicator = document.getElementById("scanningIndicator");
-    const resultText = document.querySelector("#result span");
+    <script>
+        // Camera and scanner variables
+        let codeReader = null;
+        let currentStream = null;
+        let isScanning = false;
+        
+        // Sample data
+        const teachers = {
+            'TCH001': { name: 'Bu Sari Dewi', subject: 'Matematika' },
+            'TCH002': { name: 'Pak Ahmad Rizki', subject: 'Bahasa Indonesia' },
+            'TCH003': { name: 'Bu Maya Sinta', subject: 'IPA' },
+            'TCH004': { name: 'Pak Budi Santoso', subject: 'Sejarah' },
+            'TCH005': { name: 'Bu Rina Kartika', subject: 'Bahasa Inggris' }
+        };
 
-    let stream = null;
-    let scanning = false;
+        const classes = {
+            'CLS001': 'VII-A',
+            'CLS002': 'VII-B', 
+            'CLS003': 'VIII-A',
+            'CLS004': 'VIII-B',
+            'CLS005': 'IX-A'
+        };
 
-    startBtn.addEventListener("click", async () => {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-        video.srcObject = stream;
-        scanning = true;
-        scanningIndicator.style.display = "flex";
-        requestAnimationFrame(scanFrame);
-      } catch (err) {
-        alert("Tidak bisa mengakses kamera: " + err);
-      }
-    });
+        const schedule = [
+            { time: '07:00-07:45', teacherId: 'TCH001', classId: 'CLS001', status: 'hadir', checkIn: '07:02', checkOut: null },
+            { time: '07:45-08:30', teacherId: 'TCH002', classId: 'CLS002', status: 'tidak-hadir', checkIn: null, checkOut: null },
+            { time: '08:30-09:15', teacherId: 'TCH003', classId: 'CLS003', status: 'terlambat', checkIn: '08:35', checkOut: null },
+            { time: '09:30-10:15', teacherId: 'TCH004', classId: 'CLS004', status: 'belum-dimulai', checkIn: null, checkOut: null },
+            { time: '10:15-11:00', teacherId: 'TCH005', classId: 'CLS005', status: 'belum-dimulai', checkIn: null, checkOut: null }
+        ];
 
-    function scanFrame() {
-      if (!scanning) return;
+        let activities = [
+            { time: '07:02', teacher: 'Bu Sari Dewi', action: 'masuk', class: 'VII-A' },
+            { time: '08:35', teacher: 'Bu Maya Sinta', action: 'masuk', class: 'VIII-A' }
+        ];
 
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentDate();
+            renderSchedule();
+            renderRecentActivity();
+            updateStats();
+            
+            // Auto-focus barcode input
+            document.getElementById('barcodeInput').focus();
+            
+            // Handle Enter key in barcode input
+            document.getElementById('barcodeInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    processManualBarcode();
+                }
+            });
+            
+            // Initialize barcode reader
+            initializeBarcodeReader();
+        });
 
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, canvas.width, canvas.height, {
-        inversionAttempts: "dontInvert",
-      });
+        function initializeBarcodeReader() {
+            try {
+                codeReader = new ZXing.BrowserMultiFormatReader();
+            } catch (error) {
+                console.error('Error initializing barcode reader:', error);
+                showStatus('error', 'Error Scanner', 'Tidak dapat menginisialisasi scanner barcode');
+            }
+        }
 
-      if (code) {
-        resultText.textContent = code.data;
-        scanningIndicator.style.display = "none";
-        stopCamera();
-      } else {
-        requestAnimationFrame(scanFrame);
-      }
-    }
+        async function startCamera() {
+            if (!codeReader) {
+                showStatus('error', 'Scanner Tidak Tersedia', 'Barcode reader belum diinisialisasi');
+                return;
+            }
 
-    function stopCamera() {
-      scanning = false;
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-    }
-  </script>
-</body>
+            try {
+                const videoElement = document.getElementById('cameraVideo');
+                const placeholder = document.getElementById('cameraPlaceholder');
+                const scanningIndicator = document.getElementById('scanningIndicator');
+                const startBtn = document.getElementById('startCameraBtn');
+                const stopBtn = document.getElementById('stopCameraBtn');
+
+                // Show loading indicator
+                placeholder.classList.add('hidden');
+                scanningIndicator.classList.remove('hidden');
+                
+                // Request camera permission and start scanning
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment', // Use back camera if available
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                
+                currentStream = stream;
+                videoElement.srcObject = stream;
+                videoElement.classList.remove('hidden');
+                scanningIndicator.classList.add('hidden');
+                
+                // Update button states
+                startBtn.disabled = true;
+                startBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                startBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                stopBtn.disabled = false;
+                stopBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                stopBtn.classList.add('bg-red-500', 'hover:bg-red-600');
+                
+                // Start barcode detection
+                isScanning = true;
+                startBarcodeDetection();
+                
+                showStatus('success', 'Kamera Aktif', 'Arahkan barcode ke kamera untuk scan otomatis');
+                
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                const placeholder = document.getElementById('cameraPlaceholder');
+                const scanningIndicator = document.getElementById('scanningIndicator');
+                
+                placeholder.classList.remove('hidden');
+                scanningIndicator.classList.add('hidden');
+                
+                if (error.name === 'NotAllowedError') {
+                    showStatus('error', 'Akses Kamera Ditolak', 'Silakan izinkan akses kamera untuk menggunakan scanner');
+                } else if (error.name === 'NotFoundError') {
+                    showStatus('error', 'Kamera Tidak Ditemukan', 'Tidak ada kamera yang tersedia di perangkat ini');
+                } else {
+                    showStatus('error', 'Error Kamera', 'Tidak dapat mengakses kamera: ' + error.message);
+                }
+            }
+        }
+
+        function stopCamera() {
+            isScanning = false;
+            
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+            
+            const videoElement = document.getElementById('cameraVideo');
+            const placeholder = document.getElementById('cameraPlaceholder');
+            const scanningIndicator = document.getElementById('scanningIndicator');
+            const startBtn = document.getElementById('startCameraBtn');
+            const stopBtn = document.getElementById('stopCameraBtn');
+            
+            videoElement.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+            scanningIndicator.classList.add('hidden');
+            
+            // Update button states
+            startBtn.disabled = false;
+            startBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+            startBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+            stopBtn.disabled = true;
+            stopBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+            stopBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+            
+            showStatus('success', 'Kamera Dimatikan', 'Scanner barcode telah dihentikan');
+        }
+
+        function startBarcodeDetection() {
+            if (!isScanning || !codeReader || !currentStream) return;
+            
+            const videoElement = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('scannerCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            function detectBarcode() {
+                if (!isScanning) return;
+                
+                try {
+                    // Set canvas size to match video
+                    canvas.width = videoElement.videoWidth;
+                    canvas.height = videoElement.videoHeight;
+                    
+                    // Draw current video frame to canvas
+                    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                    
+                    // Get image data for barcode detection
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    
+                    // Try to decode barcode from image data
+                    codeReader.decodeFromImageData(imageData)
+                        .then(result => {
+                            if (result && result.text) {
+                                // Barcode detected!
+                                processBarcodeResult(result.text);
+                                return;
+                            }
+                        })
+                        .catch(error => {
+                            // No barcode found in this frame, continue scanning
+                        });
+                        
+                } catch (error) {
+                    console.error('Error during barcode detection:', error);
+                }
+                
+                // Continue scanning
+                if (isScanning) {
+                    requestAnimationFrame(detectBarcode);
+                }
+            }
+            
+            // Start detection loop
+            requestAnimationFrame(detectBarcode);
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('id-ID', options);
+        }
+
+        function renderSchedule() {
+            const tbody = document.getElementById('scheduleTable');
+            tbody.innerHTML = '';
+            
+            schedule.forEach(item => {
+                const teacher = teachers[item.teacherId];
+                const className = classes[item.classId];
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-100 hover:bg-gray-50';
+                
+                let statusBadge = '';
+                let statusClass = '';
+                
+                switch(item.status) {
+                    case 'hadir':
+                        statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><span class="status-indicator status-hadir"></span>Sedang Mengajar</span>';
+                        break;
+                    case 'keluar':
+                        statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><span class="status-indicator bg-blue-500"></span>Selesai</span>';
+                        break;
+                    case 'terlambat':
+                        statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><span class="status-indicator status-keluar"></span>Terlambat</span>';
+                        break;
+                    case 'tidak-hadir':
+                        statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><span class="status-indicator status-tidak-hadir"></span>Tidak Hadir</span>';
+                        break;
+                    default:
+                        statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"><span class="status-indicator bg-gray-400"></span>Belum Dimulai</span>';
+                }
+                
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-sm text-gray-900">${item.time}</td>
+                    <td class="py-3 px-4 text-sm font-medium text-gray-900">${teacher.name}</td>
+                    <td class="py-3 px-4 text-sm text-gray-600">${teacher.subject}</td>
+                    <td class="py-3 px-4 text-sm text-gray-600">${className}</td>
+                    <td class="py-3 px-4">${statusBadge}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            container.innerHTML = '';
+            
+            if (activities.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Belum ada aktivitas hari ini</p>';
+                return;
+            }
+            
+            activities.slice(-10).reverse().forEach(activity => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center p-3 bg-gray-50 rounded-lg fade-in';
+                
+                const actionText = activity.action === 'masuk' ? 'masuk ke kelas' : 'keluar dari kelas';
+                const iconColor = activity.action === 'masuk' ? 'text-green-500' : 'text-blue-500';
+                const icon = activity.action === 'masuk' ? 
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>' :
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m10 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>';
+                
+                div.innerHTML = `
+                    <svg class="w-5 h-5 ${iconColor} mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        ${icon}
+                    </svg>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">${activity.teacher} ${actionText} ${activity.class}</p>
+                        <p class="text-xs text-gray-500">${activity.time}</p>
+                    </div>
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+
+        function updateStats() {
+            const active = schedule.filter(s => s.status === 'hadir').length;
+            const late = schedule.filter(s => s.status === 'terlambat').length;
+            const absent = schedule.filter(s => s.status === 'tidak-hadir').length;
+            
+            document.getElementById('activeTeachers').textContent = active;
+            document.getElementById('lateTeachers').textContent = late;
+            document.getElementById('absentTeachers').textContent = absent;
+        }
+
+        function processBarcodeResult(barcode) {
+            // Stop scanning temporarily to prevent multiple scans
+            const wasScanning = isScanning;
+            isScanning = false;
+            
+            // Process the barcode
+            processBarcodeData(barcode);
+            
+            // Resume scanning after a short delay
+            setTimeout(() => {
+                if (wasScanning && currentStream) {
+                    isScanning = true;
+                    startBarcodeDetection();
+                }
+            }, 2000);
+        }
+
+        function processManualBarcode() {
+            const input = document.getElementById('barcodeInput');
+            const barcode = input.value.trim();
+            
+            if (!barcode) {
+                showStatus('error', 'Kode barcode tidak boleh kosong', 'Silakan scan atau ketik kode barcode');
+                return;
+            }
+            
+            processBarcodeData(barcode);
+            input.value = '';
+            input.focus();
+        }
+
+        function processBarcodeData(barcode) {
+            if (!barcode) {
+                showStatus('error', 'Kode barcode tidak boleh kosong', 'Silakan scan atau ketik kode barcode');
+                return;
+            }
+            
+            // Simulate barcode processing
+            const teacherId = barcode.substring(0, 6);
+            const classId = barcode.substring(6, 12);
+            
+            if (!teachers[teacherId]) {
+                showStatus('error', 'Guru tidak ditemukan', `Kode guru ${teacherId} tidak terdaftar dalam sistem`);
+                return;
+            }
+            
+            if (!classes[classId]) {
+                showStatus('error', 'Kelas tidak ditemukan', `Kode kelas ${classId} tidak terdaftar dalam sistem`);
+                return;
+            }
+            
+            const teacher = teachers[teacherId];
+            const className = classes[classId];
+            const now = new Date();
+            const currentTime = now.toTimeString().substring(0, 5);
+            
+            // Find matching schedule
+            const scheduleItem = schedule.find(s => s.teacherId === teacherId && s.classId === classId);
+            
+            if (!scheduleItem) {
+                showStatus('error', 'Jadwal tidak ditemukan', `${teacher.name} tidak memiliki jadwal di kelas ${className} hari ini`);
+                return;
+            }
+            
+            // Process check-in or check-out
+            if (!scheduleItem.checkIn) {
+                // Check-in
+                scheduleItem.checkIn = currentTime;
+                scheduleItem.status = 'hadir';
+                
+                activities.push({
+                    time: currentTime,
+                    teacher: teacher.name,
+                    action: 'masuk',
+                    class: className
+                });
+                
+                showStatus('success', `${teacher.name} berhasil masuk kelas`, `Kelas ${className} - ${currentTime}`);
+            } else if (!scheduleItem.checkOut) {
+                // Check-out
+                scheduleItem.checkOut = currentTime;
+                scheduleItem.status = 'keluar';
+                
+                activities.push({
+                    time: currentTime,
+                    teacher: teacher.name,
+                    action: 'keluar',
+                    class: className
+                });
+                
+                showStatus('success', `${teacher.name} berhasil keluar kelas`, `Kelas ${className} - ${currentTime}`);
+            } else {
+                showStatus('warning', 'Sudah tercatat lengkap', `${teacher.name} sudah melakukan check-in dan check-out untuk kelas ${className}`);
+            }
+            
+            // Update displays
+            renderSchedule();
+            renderRecentActivity();
+            updateStats();
+        }
+
+        function showStatus(type, title, detail) {
+            const statusDiv = document.getElementById('scanStatus');
+            const indicator = document.getElementById('statusIndicator');
+            const titleEl = document.getElementById('statusText');
+            const detailEl = document.getElementById('statusDetail');
+            
+            statusDiv.className = 'mt-4 p-4 rounded-lg fade-in';
+            
+            switch(type) {
+                case 'success':
+                    statusDiv.classList.add('bg-green-50', 'border', 'border-green-200');
+                    indicator.className = 'status-indicator status-hadir';
+                    titleEl.className = 'font-medium text-green-800';
+                    detailEl.className = 'text-sm text-green-600 mt-1';
+                    break;
+                case 'warning':
+                    statusDiv.classList.add('bg-yellow-50', 'border', 'border-yellow-200');
+                    indicator.className = 'status-indicator status-keluar';
+                    titleEl.className = 'font-medium text-yellow-800';
+                    detailEl.className = 'text-sm text-yellow-600 mt-1';
+                    break;
+                case 'error':
+                    statusDiv.classList.add('bg-red-50', 'border', 'border-red-200');
+                    indicator.className = 'status-indicator status-tidak-hadir';
+                    titleEl.className = 'font-medium text-red-800';
+                    detailEl.className = 'text-sm text-red-600 mt-1';
+                    break;
+            }
+            
+            titleEl.textContent = title;
+            detailEl.textContent = detail;
+            statusDiv.classList.remove('hidden');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                statusDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Demo barcode generator for testing
+        function generateDemoBarcode(teacherId, classId) {
+            return teacherId + classId;
+        }
+
+        // Add some demo barcodes to console for testing
+        console.log('Demo Barcodes untuk testing:');
+        console.log('Bu Sari Dewi - VII-A:', generateDemoBarcode('TCH001', 'CLS001'));
+        console.log('Pak Ahmad Rizki - VII-B:', generateDemoBarcode('TCH002', 'CLS002'));
+        console.log('Bu Maya Sinta - VIII-A:', generateDemoBarcode('TCH003', 'CLS003'));
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979d08c3f41945c8',t:'MTc1Njk4NDE2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
