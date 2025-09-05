@@ -80,7 +80,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">SIALIM V231</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">SIALIMapan</h1>
                         <p class="text-sm text-gray-600">Sistem Monitoring Kehadiran Guru</p>
                     </div>
                 </div>
@@ -258,7 +258,7 @@
     </div>
 
     <script>
-        // Apps Script Configuration
+        // Apps Script Configuration - INTEGRATED URL
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx2uztmmWzBC7keXAkOI4p8XaDd6QjXfNiW5iskMhQy07jpkCpc5_oiGBbeeaB87le9/exec';
         
         // Camera and scanner variables
@@ -268,7 +268,6 @@
         
         // Complete teacher data from the official school database
         const teachers = {
-            // Based on official teacher data with codes and subjects
             'TCH001': { name: 'Elis Oktavia, S.Pd', subject: 'Biologi', nip: 'elis', code: '38b' },
             'TCH002': { name: 'Wardani, S.Pd', subject: 'PJOK', nip: '.14', code: '15P' },
             'TCH003': { name: 'Yati Sumyati SR, S.Pd', subject: 'Fisika', nip: 'yati', code: '33f' },
@@ -300,8 +299,6 @@
             'TCH029': { name: 'Misrini, S.Pd', subject: 'B. Inggris Wjb', nip: '.19', code: '17i' },
             'TCH030': { name: 'Fujiawati Suryanah H., S.Pd', subject: 'PAI', nip: '.47', code: '30p' },
             'TCH031': { name: 'Resty Dwi Asry, S.Pd', subject: 'Fisika', nip: '.02', code: '13f' },
-            
-            // Additional teachers from the complete database
             'TCH032': { name: 'Samsul Anam, S.Pd., M.Pd', subject: 'Kepala Sekolah', nip: '.10', code: '1' },
             'TCH033': { name: 'Suhermin, M.Pd', subject: 'Koordinator BK', nip: '.16', code: '4' },
             'TCH034': { name: 'Hj. Sunaryati, SE', subject: 'Ekonomi TL', nip: '.14', code: '5e' },
@@ -312,229 +309,46 @@
         };
 
         const classes = {
-            'CLS003': 'X1',
-            'CLS004': 'X2',
-            'CLS005': 'X3',
-            'CLS006': 'X4',
-            'CLS007': 'X5',
-            'CLS008': 'X6',
-            'CLS009': 'X7',
-            'CLS010': 'X8',
-            'CLS001': 'XI1',
-            'CLS011': 'XI2',
-            'CLS012': 'XI3',
-            'CLS013': 'XI4',
-            'CLS014': 'XI5',
-            'CLS015': 'XI6',
-            'CLS016': 'XI7',
-            'CLS017': 'XI8',
-            'CLS002': 'XII1',
-            'CLS018': 'XII2',
-            'CLS019': 'XII3',
-            'CLS020': 'XII4',
-            'CLS021': 'XII5',
-            'CLS022': 'XII6',
-            'CLS023': 'XII7',
-            'CLS024': 'XII8'
+            'CLS003': 'X1', 'CLS004': 'X2', 'CLS005': 'X3', 'CLS006': 'X4',
+            'CLS007': 'X5', 'CLS008': 'X6', 'CLS009': 'X7', 'CLS010': 'X8',
+            'CLS001': 'XI1', 'CLS011': 'XI2', 'CLS012': 'XI3', 'CLS013': 'XI4',
+            'CLS014': 'XI5', 'CLS015': 'XI6', 'CLS016': 'XI7', 'CLS017': 'XI8',
+            'CLS002': 'XII1', 'CLS018': 'XII2', 'CLS019': 'XII3', 'CLS020': 'XII4',
+            'CLS021': 'XII5', 'CLS022': 'XII6', 'CLS023': 'XII7', 'CLS024': 'XII8'
         };
 
         // QR Code to Class ID mapping
         const qrCodeToClassId = {
-            'ClaSsX1Cd': 'CLS003',
-            'ClaSsX2ffd': 'CLS004',
-            'ClaSsX3sd': 'CLS005',
-            'ClaSsX4sa': 'CLS006',
-            'ClaSsX5er': 'CLS007',
-            'ClaSsX6ww': 'CLS008',
-            'ClaSsX7sh': 'CLS009',
-            'ClaSsX8th': 'CLS010',
-            'ClaSsXI1juy': 'CLS001',
-            'ClaSsXI2mgh': 'CLS011',
-            'ClaSsXI3frt': 'CLS012',
-            'ClaSsXI4bg': 'CLS013',
-            'ClaSsXI5Bgg': 'CLS014',
-            'ClaSsXI6GrtF': 'CLS015',
-            'ClaSsXI7GfrE': 'CLS016',
-            'ClaSsXI8fEr': 'CLS017',
-            'ClaSsXII1GtR': 'CLS002',
-            'ClaSsXII2ffE': 'CLS018',
-            'ClaSsXII3cds': 'CLS019',
-            'ClaSsXII4Lok': 'CLS020',
-            'ClaSsXII5Gtr': 'CLS021',
-            'ClaSsXII6FFD': 'CLS022',
-            'ClaSsXII7der': 'CLS023',
-            'ClaSsXII8yu': 'CLS024'
+            'ClaSsX1Cd': 'CLS003', 'ClaSsX2ffd': 'CLS004', 'ClaSsX3sd': 'CLS005', 'ClaSsX4sa': 'CLS006',
+            'ClaSsX5er': 'CLS007', 'ClaSsX6ww': 'CLS008', 'ClaSsX7sh': 'CLS009', 'ClaSsX8th': 'CLS010',
+            'ClaSsXI1juy': 'CLS001', 'ClaSsXI2mgh': 'CLS011', 'ClaSsXI3frt': 'CLS012', 'ClaSsXI4bg': 'CLS013',
+            'ClaSsXI5Bgg': 'CLS014', 'ClaSsXI6GrtF': 'CLS015', 'ClaSsXI7GfrE': 'CLS016', 'ClaSsXI8fEr': 'CLS017',
+            'ClaSsXII1GtR': 'CLS002', 'ClaSsXII2ffE': 'CLS018', 'ClaSsXII3cds': 'CLS019', 'ClaSsXII4Lok': 'CLS020',
+            'ClaSsXII5Gtr': 'CLS021', 'ClaSsXII6FFD': 'CLS022', 'ClaSsXII7der': 'CLS023', 'ClaSsXII8yu': 'CLS024'
         };
 
-        // Get current day for dynamic schedule
-        const currentDay = new Date().getDay(); // 0=Sunday, 1=Monday, etc.
-        
-        // Complete weekly schedule for all classes (raw data)
+        // Sample schedule data
+        const currentDay = new Date().getDay();
         const rawWeeklySchedule = {
-            1: [ // Monday - X1, XI1 & XII1
-                // X1 Schedule
+            1: [ // Monday
                 { time: '08:00-08:35', teacherId: 'TCH025', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
                 { time: '08:35-09:10', teacherId: 'TCH025', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
                 { time: '09:10-09:45', teacherId: 'TCH025', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:45-10:20', teacherId: 'TCH013', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:50-11:25', teacherId: 'TCH013', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:25-12:00', teacherId: 'TCH013', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH016', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH016', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH016', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                // XI1 Schedule
                 { time: '08:00-08:35', teacherId: 'TCH001', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
                 { time: '08:35-09:10', teacherId: 'TCH001', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:10-09:45', teacherId: 'TCH005', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:45-10:20', teacherId: 'TCH005', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:50-11:25', teacherId: 'TCH008', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:25-12:00', teacherId: 'TCH008', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH010', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH010', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH010', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                // XII1 Schedule
                 { time: '08:00-08:35', teacherId: 'TCH002', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:35-09:10', teacherId: 'TCH002', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:10-09:45', teacherId: 'TCH002', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:45-10:20', teacherId: 'TCH006', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:50-11:25', teacherId: 'TCH009', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:25-12:00', teacherId: 'TCH009', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH011', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH011', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH011', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null }
+                { time: '08:35-09:10', teacherId: 'TCH002', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null }
             ],
-            2: [ // Tuesday - X1, XI1 & XII1
-                // X1 Schedule
+            2: [ // Tuesday
                 { time: '08:00-08:35', teacherId: 'TCH026', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
                 { time: '08:35-09:10', teacherId: 'TCH026', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:10-09:45', teacherId: 'TCH027', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:45-10:20', teacherId: 'TCH027', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:50-11:25', teacherId: 'TCH001', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:25-12:00', teacherId: 'TCH001', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH028', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH028', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH028', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                // XI1 Schedule
                 { time: '08:00-08:35', teacherId: 'TCH003', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
                 { time: '08:35-09:10', teacherId: 'TCH003', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:10-09:45', teacherId: 'TCH003', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:45-10:20', teacherId: 'TCH007', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:50-11:25', teacherId: 'TCH007', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:25-12:00', teacherId: 'TCH007', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH012', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH012', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH012', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                // XII1 Schedule
                 { time: '08:00-08:35', teacherId: 'TCH004', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:35-09:10', teacherId: 'TCH004', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:10-09:45', teacherId: 'TCH005', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:45-10:20', teacherId: 'TCH005', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:50-11:25', teacherId: 'TCH015', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:25-12:00', teacherId: 'TCH015', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH013', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH013', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH014', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null }
-            ],
-            3: [ // Wednesday - X1, XI1 & XII1
-                // X1 Schedule
-                { time: '07:15-07:50', teacherId: 'TCH026', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '07:50-08:25', teacherId: 'TCH026', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:25-09:00', teacherId: 'TCH017', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:00-09:35', teacherId: 'TCH017', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:05-10:40', teacherId: 'TCH017', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:40-11:15', teacherId: 'TCH029', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:15-11:50', teacherId: 'TCH029', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH030', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH030', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH030', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                // XI1 Schedule
-                { time: '07:15-07:50', teacherId: 'TCH003', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '07:50-08:25', teacherId: 'TCH003', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:25-09:00', teacherId: 'TCH010', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:00-09:35', teacherId: 'TCH010', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:05-10:40', teacherId: 'TCH016', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:40-11:15', teacherId: 'TCH016', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:15-11:50', teacherId: 'TCH017', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH017', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH018', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH018', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                // XII1 Schedule
-                { time: '07:15-07:50', teacherId: 'TCH015', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '07:50-08:25', teacherId: 'TCH015', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:25-09:00', teacherId: 'TCH011', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:00-09:35', teacherId: 'TCH011', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:05-10:40', teacherId: 'TCH012', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:40-11:15', teacherId: 'TCH012', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:15-11:50', teacherId: 'TCH012', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH019', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH019', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH020', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null }
-            ],
-            4: [ // Thursday - X1, XI1 & XII1
-                // X1 Schedule
-                { time: '07:15-07:50', teacherId: 'TCH023', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '07:50-08:25', teacherId: 'TCH023', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:25-09:00', teacherId: 'TCH023', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:00-09:35', teacherId: 'TCH022', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:05-10:40', teacherId: 'TCH022', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:40-11:15', teacherId: 'TCH031', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:15-11:50', teacherId: 'TCH031', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH003', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH003', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH003', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                // XI1 Schedule
-                { time: '07:15-07:50', teacherId: 'TCH021', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '07:50-08:25', teacherId: 'TCH021', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:25-09:00', teacherId: 'TCH008', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:00-09:35', teacherId: 'TCH008', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:05-10:40', teacherId: 'TCH001', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:40-11:15', teacherId: 'TCH005', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:15-11:50', teacherId: 'TCH018', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH018', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH016', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH016', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                // XII1 Schedule
-                { time: '07:15-07:50', teacherId: 'TCH019', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '07:50-08:25', teacherId: 'TCH004', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:25-09:00', teacherId: 'TCH004', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:00-09:35', teacherId: 'TCH004', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:05-10:40', teacherId: 'TCH006', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:40-11:15', teacherId: 'TCH006', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '11:15-11:50', teacherId: 'TCH014', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '12:50-13:25', teacherId: 'TCH014', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '13:25-14:00', teacherId: 'TCH020', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '14:00-14:35', teacherId: 'TCH020', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null }
-            ],
-            5: [ // Friday - X1, XI1 & XII1
-                // X1 Schedule
-                { time: '07:05-07:35', teacherId: 'TCH027', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '07:35-08:05', teacherId: 'TCH027', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:05-08:35', teacherId: 'TCH031', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:35-09:05', teacherId: 'TCH029', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:15-09:45', teacherId: 'TCH021', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:45-10:15', teacherId: 'TCH021', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:15-10:45', teacherId: 'TCH024', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:45-11:15', teacherId: 'TCH024', classId: 'CLS003', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                // XI1 Schedule
-                { time: '07:05-07:35', teacherId: 'TCH022', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '07:35-08:05', teacherId: 'TCH022', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:05-08:35', teacherId: 'TCH023', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:35-09:05', teacherId: 'TCH023', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:15-09:45', teacherId: 'TCH001', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:45-10:15', teacherId: 'TCH001', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:15-10:45', teacherId: 'TCH016', classId: 'CLS001', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                // XII1 Schedule
-                { time: '07:05-07:35', teacherId: 'TCH024', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '07:35-08:05', teacherId: 'TCH024', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:05-08:35', teacherId: 'TCH020', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '08:35-09:05', teacherId: 'TCH020', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:15-09:45', teacherId: 'TCH014', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '09:45-10:15', teacherId: 'TCH006', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null },
-                { time: '10:15-10:45', teacherId: 'TCH006', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null }
+                { time: '08:35-09:10', teacherId: 'TCH004', classId: 'CLS002', status: 'belum-dimulai', checkIn: null, checkOut: null }
             ]
         };
 
-        // Function to merge consecutive same teacher schedules
         function mergeSchedule(rawSchedule) {
             const merged = [];
             let currentGroup = null;
@@ -545,28 +359,9 @@
                 if (currentGroup && 
                     currentGroup.teacherId === item.teacherId && 
                     currentGroup.classId === item.classId) {
-                    // Same teacher and class, extend the time range
                     const endTime = item.time.split('-')[1];
                     currentGroup.time = currentGroup.time.split('-')[0] + '-' + endTime;
-                    
-                    // Update status - prioritize active statuses
-                    if (item.status === 'hadir' || currentGroup.status === 'hadir') {
-                        currentGroup.status = 'hadir';
-                    } else if (item.status === 'terlambat' || currentGroup.status === 'terlambat') {
-                        currentGroup.status = 'terlambat';
-                    } else if (item.status === 'tidak-hadir' || currentGroup.status === 'tidak-hadir') {
-                        currentGroup.status = 'tidak-hadir';
-                    }
-                    
-                    // Keep earliest checkIn and latest checkOut
-                    if (item.checkIn && !currentGroup.checkIn) {
-                        currentGroup.checkIn = item.checkIn;
-                    }
-                    if (item.checkOut) {
-                        currentGroup.checkOut = item.checkOut;
-                    }
                 } else {
-                    // Different teacher or class, start new group
                     if (currentGroup) {
                         merged.push(currentGroup);
                     }
@@ -574,7 +369,6 @@
                 }
             }
             
-            // Add the last group
             if (currentGroup) {
                 merged.push(currentGroup);
             }
@@ -582,24 +376,14 @@
             return merged;
         }
 
-        // Process and merge schedules
         const weeklySchedule = {};
         Object.keys(rawWeeklySchedule).forEach(day => {
             weeklySchedule[day] = mergeSchedule(rawWeeklySchedule[day]);
         });
 
-        // Get today's schedule or default to Monday if weekend
         let allSchedule = weeklySchedule[currentDay] || weeklySchedule[1];
         let selectedClass = 'all';
         let schedule = allSchedule;
-
-        let activities = [
-            { time: '08:02', teacher: 'Elis Oktavia, S.Pd', action: 'masuk', class: 'XI1' },
-            { time: '08:35', teacher: 'Elis Oktavia, S.Pd', action: 'masuk', class: 'XI1' },
-            { time: '08:00', teacher: 'Wardani, S.Pd', action: 'masuk', class: 'XII1' },
-            { time: '08:35', teacher: 'Wardani, S.Pd', action: 'masuk', class: 'XII1' },
-            { time: '09:10', teacher: 'Wardani, S.Pd', action: 'masuk', class: 'XII1' }
-        ];
 
         // Apps Script Integration Functions
         async function sendToAppsScript(action, data) {
@@ -683,7 +467,6 @@
             }
         }
 
-        // Initialize database
         async function initializeDatabase() {
             showLoadingModal('Menginisialisasi database...', 'Mohon tunggu, sistem sedang menyiapkan database dan data sample.');
             
@@ -691,7 +474,6 @@
                 const result = await sendToAppsScript('initializeDatabase', {});
                 
                 if (result.success) {
-                    // Also setup sample data
                     const sampleResult = await sendToAppsScript('setupSampleData', {});
                     
                     closeLoadingModal();
@@ -711,7 +493,6 @@
             }
         }
 
-        // Load today's attendance from database
         async function loadTodayAttendance() {
             showLoadingModal('Memuat data kehadiran...', 'Mengambil data kehadiran hari ini dari database.');
             
@@ -719,7 +500,6 @@
                 const result = await getFromAppsScript('getAttendanceStatus', {});
                 
                 if (result.success) {
-                    // Update local schedule with database data
                     result.data.forEach(attendance => {
                         const scheduleItem = allSchedule.find(s => 
                             s.teacherId === attendance.TeacherID && 
@@ -735,7 +515,6 @@
                         }
                     });
                     
-                    // Re-filter and render
                     changeSelectedClass();
                     
                     closeLoadingModal();
@@ -750,7 +529,6 @@
             }
         }
 
-        // Show attendance report
         async function showAttendanceReport() {
             showLoadingModal('Menyiapkan laporan...', 'Mengambil data laporan kehadiran dari database.');
             
@@ -858,7 +636,6 @@
             }
         }
 
-        // Function to change selected class
         function changeSelectedClass() {
             selectedClass = document.getElementById('classSelector').value;
             
@@ -871,27 +648,21 @@
             renderSchedule();
         }
 
-        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             updateCurrentDate();
             renderSchedule();
-            
-            // Initialize barcode reader
             initializeBarcodeReader();
             
-            // Load today's attendance on startup
             setTimeout(() => {
                 loadTodayAttendance();
             }, 1000);
             
-            // Auto-refresh schedule every 30 seconds to update overdue status
             setInterval(() => {
                 renderSchedule();
-            }, 30000); // 30 seconds
+            }, 30000);
         });
 
         function initializeBarcodeReader() {
-            // jsQR doesn't need initialization, just check if it's available
             if (typeof jsQR === 'undefined') {
                 console.error('jsQR library not loaded');
                 showStatus('error', 'Error Scanner', 'Library QR scanner tidak tersedia');
@@ -913,14 +684,12 @@
                 const startBtn = document.getElementById('startCameraBtn');
                 const stopBtn = document.getElementById('stopCameraBtn');
 
-                // Show loading indicator
                 placeholder.classList.add('hidden');
                 scanningIndicator.classList.remove('hidden');
                 
-                // Request camera permission and start scanning
                 const stream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
-                        facingMode: 'environment', // Use back camera if available
+                        facingMode: 'environment',
                         width: { ideal: 1280 },
                         height: { ideal: 720 }
                     } 
@@ -931,7 +700,6 @@
                 videoElement.classList.remove('hidden');
                 scanningIndicator.classList.add('hidden');
                 
-                // Update button states
                 startBtn.disabled = true;
                 startBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
                 startBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
@@ -939,7 +707,6 @@
                 stopBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
                 stopBtn.classList.add('bg-red-500', 'hover:bg-red-600');
                 
-                // Start barcode detection
                 isScanning = true;
                 startBarcodeDetection();
                 
@@ -981,11 +748,9 @@
             placeholder.classList.remove('hidden');
             scanningIndicator.classList.add('hidden');
             
-            // Hide canvas
             const canvas = document.getElementById('scannerCanvas');
             canvas.classList.add('hidden');
             
-            // Update button states
             startBtn.disabled = false;
             startBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
             startBtn.classList.add('bg-green-500', 'hover:bg-green-600');
@@ -1003,7 +768,6 @@
             const canvas = document.getElementById('scannerCanvas');
             const ctx = canvas.getContext('2d');
             
-            // Show canvas for debugging
             canvas.classList.remove('hidden');
             
             function detectQRCode() {
@@ -1015,23 +779,18 @@
                 }
                 
                 try {
-                    // Set canvas size to match video
                     canvas.width = videoElement.videoWidth;
                     canvas.height = videoElement.videoHeight;
                     
-                    // Draw current video frame to canvas
                     ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
                     
-                    // Get image data for QR code detection
                     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                     
-                    // Use jsQR to detect QR codes
                     const qrCode = jsQR(imageData.data, imageData.width, imageData.height, {
                         inversionAttempts: "dontInvert",
                     });
                     
                     if (qrCode && qrCode.data) {
-                        // Draw detection box for visual feedback
                         ctx.strokeStyle = '#00ff00';
                         ctx.lineWidth = 4;
                         ctx.strokeRect(
@@ -1041,7 +800,6 @@
                             qrCode.location.bottomRightCorner.y - qrCode.location.topLeftCorner.y
                         );
                         
-                        // QR Code detected!
                         processBarcodeResult(qrCode.data);
                         return;
                     }
@@ -1050,222 +808,20 @@
                     console.error('Error during QR code detection:', error);
                 }
                 
-                // Continue scanning with faster interval
                 if (isScanning) {
-                    setTimeout(detectQRCode, 100); // Scan every 100ms for faster detection
+                    setTimeout(detectQRCode, 100);
                 }
             }
             
-            // Start detection loop
             setTimeout(detectQRCode, 100);
         }
 
-        function updateCurrentDate() {
-            const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            };
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('id-ID', options);
-            
-            // Update day name in schedule header
-            const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            const dayName = dayNames[now.getDay()];
-            document.getElementById('dayName').textContent = dayName;
-        }
-
-        function renderSchedule() {
-            const tbody = document.getElementById('scheduleTable');
-            tbody.innerHTML = '';
-            
-            if (selectedClass === 'all') {
-                // Group by class when showing all
-                const classSections = {};
-                schedule.forEach(item => {
-                    if (!classSections[item.classId]) {
-                        classSections[item.classId] = [];
-                    }
-                    classSections[item.classId].push(item);
-                });
-                
-                // Render each class section
-                Object.keys(classSections).forEach((classId, index) => {
-                    const className = classes[classId];
-                    const classItems = classSections[classId];
-                    
-                    // Add class header
-                    const headerRow = document.createElement('tr');
-                    headerRow.className = 'bg-blue-50 border-b-2 border-blue-200';
-                    headerRow.innerHTML = `
-                        <td colspan="3" class="py-4 px-4 text-lg font-bold text-blue-900 text-center">
-                            <div class="flex items-center justify-center">
-                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h10M7 11h10M7 15h10"></path>
-                                </svg>
-                                KELAS ${className}
-                                <span class="ml-3 text-sm bg-blue-200 text-blue-800 px-3 py-1 rounded-full">${classItems.length} Jadwal</span>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(headerRow);
-                    
-                    // Add class schedule items
-                    classItems.forEach(item => {
-                        const teacher = teachers[item.teacherId];
-                        const row = document.createElement('tr');
-                        
-                        // Check if schedule is overdue
-                        const isOverdue = checkIfOverdue(item.time, item.status);
-                        
-                        // Set background color based on teaching status
-                        if (item.status === 'hadir') {
-                            row.className = 'border-b border-gray-100 bg-green-100 hover:bg-green-150';
-                        } else if (item.status === 'terlambat') {
-                            row.className = 'border-b border-gray-100 bg-yellow-100 hover:bg-yellow-150';
-                        } else if (item.status === 'selesai') {
-                            // When finished, use color based on how they started (on time vs late)
-                            const lateInfo = checkLateArrival(item.checkIn, item.time);
-                            if (lateInfo.isLate) {
-                                row.className = 'border-b border-gray-100 bg-yellow-100 hover:bg-yellow-150'; // Yellow if was late
-                            } else {
-                                row.className = 'border-b border-gray-100 bg-green-100 hover:bg-green-150'; // Green if was on time
-                            }
-                        } else if (item.status === 'tidak-hadir') {
-                            row.className = 'border-b border-gray-100 bg-red-100 hover:bg-red-150';
-                        } else if (isOverdue) {
-                            row.className = 'border-b border-gray-100 bg-red-100 hover:bg-red-150';
-                        } else {
-                            row.className = 'border-b border-gray-100 hover:bg-gray-50';
-                        }
-                        
-                        let statusBadge = getStatusBadge(item.status, item.checkIn, item.time);
-                        
-                        // Get learning description for this teacher and class
-                        const learningDescription = getLearningDescription(item.teacherId, item.classId, item.status);
-                        
-                        row.innerHTML = `
-                            <td class="py-3 px-4 text-sm text-gray-900 pl-8">${item.time}</td>
-                            <td class="py-3 px-4">
-                                <div class="text-sm font-medium text-gray-900">${teacher.name}</div>
-                                <div class="text-sm text-gray-600">${teacher.subject}</div>
-                                <div class="text-xs text-gray-500 mt-1">Kelas ${className}</div>
-                                <div class="mt-2">${learningDescription}</div>
-                            </td>
-                            <td class="py-3 px-4">${statusBadge}</td>
-                        `;
-                        
-                        tbody.appendChild(row);
-                    });
-                    
-                    // Add spacing between classes (except last)
-                    if (index < Object.keys(classSections).length - 1) {
-                        const spacerRow = document.createElement('tr');
-                        spacerRow.innerHTML = '<td colspan="3" class="py-2"></td>';
-                        tbody.appendChild(spacerRow);
-                    }
-                });
-            } else {
-                // Single class view
-                schedule.forEach(item => {
-                    const teacher = teachers[item.teacherId];
-                    const className = classes[item.classId];
-                    
-                    const row = document.createElement('tr');
-                    
-                    // Check if schedule is overdue
-                    const isOverdue = checkIfOverdue(item.time, item.status);
-                    
-                    // Set background color based on teaching status
-                    if (item.status === 'hadir') {
-                        row.className = 'border-b border-gray-100 bg-green-100 hover:bg-green-150';
-                    } else if (item.status === 'terlambat') {
-                        row.className = 'border-b border-gray-100 bg-yellow-100 hover:bg-yellow-150';
-                    } else if (item.status === 'selesai') {
-                        // When finished, use color based on how they started (on time vs late)
-                        const lateInfo = checkLateArrival(item.checkIn, item.time);
-                        if (lateInfo.isLate) {
-                            row.className = 'border-b border-gray-100 bg-yellow-100 hover:bg-yellow-150'; // Yellow if was late
-                        } else {
-                            row.className = 'border-b border-gray-100 bg-green-100 hover:bg-green-150'; // Green if was on time
-                        }
-                    } else if (item.status === 'tidak-hadir') {
-                        row.className = 'border-b border-gray-100 bg-red-100 hover:bg-red-150';
-                    } else if (isOverdue) {
-                        row.className = 'border-b border-gray-100 bg-red-100 hover:bg-red-150';
-                    } else {
-                        row.className = 'border-b border-gray-100 hover:bg-gray-50';
-                    }
-                    
-                    let statusBadge = getStatusBadge(item.status, item.checkIn, item.time);
-                    
-                    // Get learning description for this teacher and class
-                    const learningDescription = getLearningDescription(item.teacherId, item.classId, item.status);
-                    
-                    row.innerHTML = `
-                        <td class="py-3 px-4 text-sm text-gray-900">${item.time}</td>
-                        <td class="py-3 px-4">
-                            <div class="text-sm font-medium text-gray-900">${teacher.name}</div>
-                            <div class="text-sm text-gray-600">${teacher.subject}</div>
-                            <div class="text-xs text-gray-500 mt-1">Kelas ${className}</div>
-                            <div class="mt-2">${learningDescription}</div>
-                        </td>
-                        <td class="py-3 px-4">${statusBadge}</td>
-                    `;
-                    
-                    tbody.appendChild(row);
-                });
-            }
-        }
-        
-        function getStatusBadge(status, checkIn = null, scheduleTime = null) {
-            switch(status) {
-                case 'hadir':
-                    let hadirText = 'Sedang Mengajar';
-                    if (checkIn && scheduleTime) {
-                        const [scheduleStart] = scheduleTime.split('-');
-                        hadirText += ` (${checkIn})`;
-                    }
-                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><span class="status-indicator status-hadir"></span>${hadirText}</span>`;
-                case 'selesai':
-                    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><span class="status-indicator bg-blue-500"></span>Selesai</span>';
-                case 'terlambat':
-                    let lateText = 'Terlambat';
-                    if (checkIn && scheduleTime) {
-                        const lateInfo = checkLateArrival(checkIn, scheduleTime);
-                        lateText += ` (${lateInfo.lateMinutes} menit)`;
-                    }
-                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><span class="status-indicator status-keluar"></span>${lateText}</span>`;
-                case 'tidak-hadir':
-                    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><span class="status-indicator status-tidak-hadir"></span>Tidak Hadir</span>';
-                default:
-                    // Check if schedule is overdue for "belum-dimulai" status
-                    if (scheduleTime && checkIfOverdue(scheduleTime, status)) {
-                        const now = new Date();
-                        const currentTime = now.toTimeString().substring(0, 5);
-                        const [scheduleStart] = scheduleTime.split('-');
-                        const [currentHour, currentMinute] = currentTime.split(':').map(Number);
-                        const [scheduleHour, scheduleMinute] = scheduleStart.split(':').map(Number);
-                        const currentTotalMinutes = currentHour * 60 + currentMinute;
-                        const scheduleTotalMinutes = scheduleHour * 60 + scheduleMinute;
-                        const overdueMinutes = currentTotalMinutes - scheduleTotalMinutes;
-                        
-                        return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><span class="status-indicator status-tidak-hadir"></span>Terlambat ${overdueMinutes} menit</span>`;
-                    }
-                    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"><span class="status-indicator bg-gray-400"></span>Belum Dimulai</span>';
-            }
-        }
-
         function processBarcodeResult(barcode) {
-            // Stop scanning temporarily to prevent multiple scans
             const wasScanning = isScanning;
             isScanning = false;
             
-            // Process the barcode
             processBarcodeData(barcode);
             
-            // Resume scanning after a short delay
             setTimeout(() => {
                 if (wasScanning && currentStream) {
                     isScanning = true;
@@ -1280,13 +836,9 @@
                 return;
             }
             
-            // Show scanned code notification first
             showCodeNotification(barcode);
             
-            // QR code is now the actual QR code from the table
             const scannedQRCode = barcode.trim();
-            
-            // Find class ID from QR code
             const scannedClassId = qrCodeToClassId[scannedQRCode];
             
             if (!scannedClassId) {
@@ -1295,23 +847,17 @@
             }
             
             const scannedClassName = classes[scannedClassId];
-            
-            // Since we don't know which teacher is scanning, we need to ask or detect
-            // For demo purposes, let's show a teacher selection dialog
             showTeacherSelectionDialog(scannedClassId, scannedClassName, scannedQRCode);
         }
         
         function showTeacherSelectionDialog(scannedClassId, scannedClassName, qrCode) {
-            // Stop camera when showing teacher selection
             stopCamera();
             
-            // Get teachers who have classes in this classroom today
             const teachersInClass = allSchedule
                 .filter(schedule => schedule.classId === scannedClassId)
                 .map(schedule => schedule.teacherId)
-                .filter((teacherId, index, array) => array.indexOf(teacherId) === index); // Remove duplicates
+                .filter((teacherId, index, array) => array.indexOf(teacherId) === index);
             
-            // If no teachers found for this class
             if (teachersInClass.length === 0) {
                 showStatus('error', 'Tidak ada jadwal', `Tidak ada guru yang terjadwal mengajar di kelas ${scannedClassName} hari ini`);
                 setTimeout(() => {
@@ -1320,7 +866,6 @@
                 return;
             }
             
-            // Create modal for teacher selection
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
             modal.innerHTML = `
@@ -1363,24 +908,20 @@
                 window.currentModal = null;
             }
             
-            // Reset to initial state when canceling
             setTimeout(() => {
                 resetToInitialState();
             }, 500);
         }
         
-        // Updated processTeacherAttendance function with Apps Script integration
         async function processTeacherAttendance(teacherId, scannedClassId, scannedClassName, qrCode) {
             closeTeacherDialog();
             
             try {
                 showLoadingModal('Memproses absensi...', 'Mengirim data ke database, mohon tunggu...');
                 
-                // Find current schedule to determine if this is check-in or check-out
                 const currentSchedule = findCurrentSchedule(teacherId, scannedClassId);
                 const actionType = (currentSchedule && currentSchedule.checkIn && !currentSchedule.checkOut) ? 'checkout' : 'checkin';
                 
-                // Send to Apps Script
                 const result = await sendToAppsScript('processAttendance', {
                     qrCode: qrCode,
                     teacherId: teacherId,
@@ -1393,7 +934,6 @@
                     const teacher = teachers[teacherId];
                     
                     if (actionType === 'checkin') {
-                        // Update local schedule
                         if (currentSchedule) {
                             currentSchedule.status = result.data.status;
                             currentSchedule.checkIn = result.data.checkInTime;
@@ -1409,7 +949,6 @@
                             showSuccess(teacher, scannedClassName, result.data.checkInTime, 'Tepat waktu');
                         }
                     } else {
-                        // Check-out successful
                         if (currentSchedule) {
                             currentSchedule.status = 'selesai';
                             currentSchedule.checkOut = result.data.checkOutTime;
@@ -1422,7 +961,6 @@
                 } else {
                     showStatus('error', 'Error Absensi', result.message);
                     
-                    // If teacher doesn't have schedule, show their actual schedules
                     if (result.teacherSchedules && result.teacherSchedules.length > 0) {
                         showTeacherScheduleDialog(teachers[teacherId], result.teacherSchedules, scannedClassName);
                     }
@@ -1435,110 +973,6 @@
             }
         }
 
-        function showCheckOutSuccess(teacher, className, data) {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-            modal.innerHTML = `
-                <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4">
-                    <div class="text-center mb-4">
-                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
-                            <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-blue-800 mb-2">✅ PEMBELAJARAN SELESAI!</h3>
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                            <p class="text-lg font-semibold text-blue-900 mb-1">${teacher.name}</p>
-                            <p class="text-sm text-blue-700 mb-1">Kelas: <strong>${className}</strong></p>
-                            <p class="text-sm text-blue-700 mb-1">Masuk: <strong>${data.checkInTime}</strong></p>
-                            <p class="text-sm text-blue-700 mb-1">Keluar: <strong>${data.checkOutTime}</strong></p>
-                            <p class="text-sm text-blue-700">Durasi: <strong>${data.duration}</strong></p>
-                            ${data.wasLate ? '<p class="text-xs text-yellow-600 mt-2">⚠️ Catatan: Terlambat saat masuk</p>' : ''}
-                        </div>
-                    </div>
-                    
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                        <p class="text-sm text-green-700 text-center">
-                            <strong>✅ Status:</strong> Data pembelajaran telah tersimpan dalam database
-                        </p>
-                    </div>
-                    
-                    <button onclick="closeSuccess()" 
-                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
-                        Selesai
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            window.currentModal = modal;
-            
-            // Also show status
-            showStatus('success', `${teacher.name} selesai mengajar`, `${className} - Durasi: ${data.duration}`);
-        }
-
-        // Updated saveLearningActivity function with Apps Script integration
-        async function saveLearningActivity(event, teacherName, className, currentTime, timeStatus) {
-            event.preventDefault();
-            
-            const description = document.getElementById('activityDescription').value.trim();
-            
-            if (description.length < 10) {
-                alert('Deskripsi kegiatan pembelajaran minimal 10 karakter!');
-                return;
-            }
-            
-            try {
-                showLoadingModal('Menyimpan kegiatan...', 'Mengirim deskripsi pembelajaran ke database...');
-                
-                // Find attendance ID from current schedule
-                const teacherId = Object.keys(teachers).find(id => teachers[id].name === teacherName);
-                const classId = Object.keys(classes).find(id => classes[id] === className);
-                const currentSchedule = findCurrentSchedule(teacherId, classId);
-                
-                if (currentSchedule && currentSchedule.attendanceId) {
-                    const result = await sendToAppsScript('saveLearningActivity', {
-                        attendanceId: currentSchedule.attendanceId,
-                        description: description,
-                        materials: '', // Could add more fields later
-                        method: '',
-                        studentResponse: '',
-                        notes: ''
-                    });
-                    
-                    closeLoadingModal();
-                    
-                    if (result.success) {
-                        // Update local data
-                        currentSchedule.learningDescription = description;
-                        
-                        // Close modal and show success
-                        if (window.currentModal) {
-                            document.body.removeChild(window.currentModal);
-                            window.currentModal = null;
-                        }
-                        
-                        showLearningActivitySuccess(teacherName, className, description);
-                    } else {
-                        alert('Error menyimpan kegiatan: ' + result.message);
-                    }
-                } else {
-                    closeLoadingModal();
-                    alert('Data absensi tidak ditemukan. Pastikan Anda sudah melakukan check-in.');
-                }
-                
-            } catch (error) {
-                closeLoadingModal();
-                console.error('Error saving learning activity:', error);
-                alert('Error menyimpan kegiatan: ' + error.message);
-            }
-        }
-
-        // Rest of the functions remain the same...
-        function processCheckIn(attendanceSheet, existingAttendance, teacherData, classData, scheduleData, currentDate, currentTime, now) {
-            // This function is now handled by Apps Script
-        }
-        
         function showSuccess(teacher, className, currentTime, timeStatus) {
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
@@ -1575,7 +1009,6 @@
             document.body.appendChild(modal);
             window.currentModal = modal;
             
-            // Also show status
             showStatus('success', `${teacher.name} berhasil masuk kelas`, `${className} - ${currentTime} (${timeStatus})`);
         }
         
@@ -1617,12 +1050,51 @@
             document.body.appendChild(modal);
             window.currentModal = modal;
             
-            // Also show status
             showStatus('warning', `${teacher.name} terlambat ${lateInfo.lateMinutes} menit`, `${className} - Masuk: ${currentTime}`);
+        }
+
+        function showCheckOutSuccess(teacher, className, data) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4">
+                    <div class="text-center mb-4">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+                            <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-blue-800 mb-2">✅ PEMBELAJARAN SELESAI!</h3>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                            <p class="text-lg font-semibold text-blue-900 mb-1">${teacher.name}</p>
+                            <p class="text-sm text-blue-700 mb-1">Kelas: <strong>${className}</strong></p>
+                            <p class="text-sm text-blue-700 mb-1">Masuk: <strong>${data.checkInTime}</strong></p>
+                            <p class="text-sm text-blue-700 mb-1">Keluar: <strong>${data.checkOutTime}</strong></p>
+                            <p class="text-sm text-blue-700">Durasi: <strong>${data.duration}</strong></p>
+                            ${data.wasLate ? '<p class="text-xs text-yellow-600 mt-2">⚠️ Catatan: Terlambat saat masuk</p>' : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-green-700 text-center">
+                            <strong>✅ Status:</strong> Data pembelajaran telah tersimpan dalam database
+                        </p>
+                    </div>
+                    
+                    <button onclick="closeSuccess()" 
+                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                        Selesai
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+            
+            showStatus('success', `${teacher.name} selesai mengajar`, `${className} - Durasi: ${data.duration}`);
         }
         
         function showLearningActivityForm(teacherName, className, currentTime, timeStatus) {
-            // Close current modal first
             if (window.currentModal) {
                 document.body.removeChild(window.currentModal);
                 window.currentModal = null;
@@ -1640,6 +1112,587 @@
                         </div>
                         <h3 class="text-xl font-bold text-blue-800 mb-2">📝 DESKRIPSI KEGIATAN PEMBELAJARAN</h3>
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                            <p class="text-lg font-semibold text-blue-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a4dee6451b6045',t:'MTc1NzA2NjMzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-							
+                            <p class="text-lg font-semibold text-blue-900 mb-1">${teacherName}</p>
+                            <p class="text-sm text-blue-700 mb-1">Kelas: <strong>${className}</strong></p>
+                            <p class="text-sm text-blue-700 mb-1">Waktu Masuk: <strong>${currentTime}</strong></p>
+                            <p class="text-sm text-blue-700">Status: <strong>${timeStatus}</strong></p>
+                        </div>
+                    </div>
+                    
+                    <form onsubmit="saveLearningActivity(event, '${teacherName}', '${className}', '${currentTime}', '${timeStatus}')">
+                        <div class="mb-4">
+                            <label for="activityDescription" class="block text-sm font-medium text-gray-700 mb-2">
+                                Deskripsi Kegiatan Pembelajaran <span class="text-red-500">*</span>
+                            </label>
+                            <textarea id="activityDescription" 
+                                      rows="4" 
+                                      required
+                                      minlength="10"
+                                      placeholder="Contoh: Menjelaskan materi tentang sistem persamaan linear dua variabel, memberikan contoh soal, dan latihan mandiri..."
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+                            <p class="text-xs text-gray-500 mt-1">Minimal 10 karakter. Jelaskan secara singkat kegiatan pembelajaran yang akan dilakukan.</p>
+                        </div>
+                        
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                            <p class="text-xs text-yellow-700">
+                                💡 <strong>Tips:</strong> Deskripsi ini akan tersimpan dalam database dan dapat dilihat dalam laporan kegiatan pembelajaran.
+                            </p>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button type="submit" 
+                                    class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                                💾 Simpan & Mulai Mengajar
+                            </button>
+                            <button type="button" onclick="skipLearningActivity('${teacherName}', '${className}')" 
+                                    class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                                ⏭️ Lewati
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        async function saveLearningActivity(event, teacherName, className, currentTime, timeStatus) {
+            event.preventDefault();
+            
+            const description = document.getElementById('activityDescription').value.trim();
+            
+            if (description.length < 10) {
+                alert('Deskripsi kegiatan pembelajaran minimal 10 karakter!');
+                return;
+            }
+            
+            try {
+                showLoadingModal('Menyimpan kegiatan...', 'Mengirim deskripsi pembelajaran ke database...');
+                
+                const teacherId = Object.keys(teachers).find(id => teachers[id].name === teacherName);
+                const classId = Object.keys(classes).find(id => classes[id] === className);
+                const currentSchedule = findCurrentSchedule(teacherId, classId);
+                
+                if (currentSchedule && currentSchedule.attendanceId) {
+                    const result = await sendToAppsScript('saveLearningActivity', {
+                        attendanceId: currentSchedule.attendanceId,
+                        description: description,
+                        materials: '',
+                        method: '',
+                        studentResponse: '',
+                        notes: ''
+                    });
+                    
+                    closeLoadingModal();
+                    
+                    if (result.success) {
+                        currentSchedule.learningDescription = description;
+                        
+                        if (window.currentModal) {
+                            document.body.removeChild(window.currentModal);
+                            window.currentModal = null;
+                        }
+                        
+                        showLearningActivitySuccess(teacherName, className, description);
+                    } else {
+                        alert('Error menyimpan kegiatan: ' + result.message);
+                    }
+                } else {
+                    closeLoadingModal();
+                    alert('Data absensi tidak ditemukan. Pastikan Anda sudah melakukan check-in.');
+                }
+                
+            } catch (error) {
+                closeLoadingModal();
+                console.error('Error saving learning activity:', error);
+                alert('Error menyimpan kegiatan: ' + error.message);
+            }
+        }
+
+        function skipLearningActivity(teacherName, className) {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+            
+            showStatus('success', 'Pembelajaran dimulai', `${teacherName} - ${className} (Tanpa deskripsi kegiatan)`);
+            
+            setTimeout(() => {
+                resetToInitialState();
+            }, 3000);
+        }
+        
+        function showLearningActivitySuccess(teacherName, className, description) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4">
+                    <div class="text-center mb-4">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                            <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-green-800 mb-2">✅ KEGIATAN PEMBELAJARAN TERSIMPAN!</h3>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                            <p class="text-lg font-semibold text-green-900 mb-2">${teacherName}</p>
+                            <p class="text-sm text-green-700 mb-2">Kelas: <strong>${className}</strong></p>
+                            <div class="bg-white border border-green-300 rounded p-3">
+                                <p class="text-xs text-gray-600 mb-1"><strong>Deskripsi Kegiatan:</strong></p>
+                                <p class="text-sm text-gray-800">${description}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-green-700 text-center">
+                            <strong>✅ Berhasil:</strong> Kegiatan pembelajaran telah tersimpan dalam database dan siap untuk pembelajaran!
+                        </p>
+                    </div>
+                    
+                    <button onclick="closeSuccess()" 
+                            class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                        🎓 Selamat Mengajar!
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+        
+        function showTeacherScheduleDialog(teacher, schedules, scannedClassName) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Jadwal Mengajar Hari Ini</h3>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-yellow-800 mb-2">
+                            <strong>${teacher.name}</strong> tidak memiliki jadwal mengajar di <strong>Kelas ${scannedClassName}</strong> saat ini.
+                        </p>
+                        <p class="text-xs text-yellow-700">Berikut jadwal mengajar Anda hari ini:</p>
+                    </div>
+                    
+                    <div class="space-y-2 mb-4">
+                        ${schedules.map(schedule => `
+                            <div class="p-3 border border-gray-200 rounded-lg">
+                                <div class="text-sm font-medium text-gray-900">${schedule.time}</div>
+                                <div class="text-sm text-gray-600">Kelas ${schedule.className}</div>
+                                <div class="text-xs text-gray-500">${schedule.subject}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <button onclick="closeTeacherDialog()" 
+                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">
+                        Mengerti
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+        
+        function closeSuccess() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+            
+            setTimeout(() => {
+                resetToInitialState();
+            }, 1000);
+        }
+        
+        function resetToInitialState() {
+            const statusDiv = document.getElementById('scanStatus');
+            statusDiv.classList.add('hidden');
+            
+            if (currentStream) {
+                stopCamera();
+            }
+            
+            renderSchedule();
+        }
+        
+        function showStatus(type, title, message) {
+            const statusDiv = document.getElementById('scanStatus');
+            const indicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const statusDetail = document.getElementById('statusDetail');
+            
+            statusDiv.classList.remove('hidden', 'bg-green-100', 'bg-yellow-100', 'bg-red-100', 'border-green-200', 'border-yellow-200', 'border-red-200');
+            statusText.classList.remove('text-green-800', 'text-yellow-800', 'text-red-800');
+            statusDetail.classList.remove('text-green-600', 'text-yellow-600', 'text-red-600');
+            
+            if (type === 'success') {
+                statusDiv.classList.add('bg-green-100', 'border-green-200');
+                statusText.classList.add('text-green-800');
+                statusDetail.classList.add('text-green-600');
+                indicator.className = 'status-indicator status-hadir';
+            } else if (type === 'warning') {
+                statusDiv.classList.add('bg-yellow-100', 'border-yellow-200');
+                statusText.classList.add('text-yellow-800');
+                statusDetail.classList.add('text-yellow-600');
+                indicator.className = 'status-indicator status-keluar';
+            } else {
+                statusDiv.classList.add('bg-red-100', 'border-red-200');
+                statusText.classList.add('text-red-800');
+                statusDetail.classList.add('text-red-600');
+                indicator.className = 'status-indicator status-tidak-hadir';
+            }
+            
+            statusText.textContent = title;
+            statusDetail.textContent = message;
+            statusDiv.classList.add('fade-in');
+            
+            const hideDelay = type === 'error' ? 8000 : 5000;
+            setTimeout(() => {
+                statusDiv.classList.add('hidden');
+            }, hideDelay);
+        }
+        
+        function showCodeNotification(code) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 fade-in';
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                    </svg>
+                    <span class="text-sm">QR Code: ${code}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 3000);
+        }
+        
+        function findCurrentSchedule(teacherId, classId) {
+            return allSchedule.find(schedule => 
+                schedule.teacherId === teacherId && 
+                schedule.classId === classId
+            );
+        }
+        
+        function checkIfOverdue(scheduleTime, status) {
+            if (status !== 'belum-dimulai') return false;
+            
+            const now = new Date();
+            const currentTime = now.toTimeString().substring(0, 5);
+            const [scheduleStart] = scheduleTime.split('-');
+            
+            const [currentHour, currentMinute] = currentTime.split(':').map(Number);
+            const [scheduleHour, scheduleMinute] = scheduleStart.split(':').map(Number);
+            
+            const currentTotalMinutes = currentHour * 60 + currentMinute;
+            const scheduleTotalMinutes = scheduleHour * 60 + scheduleMinute;
+            
+            return currentTotalMinutes > (scheduleTotalMinutes + 5);
+        }
+        
+        function checkLateArrival(checkInTime, scheduleTime) {
+            if (!checkInTime || !scheduleTime) return { isLate: false, lateMinutes: 0 };
+            
+            const [scheduleStart] = scheduleTime.split('-');
+            const [checkInHour, checkInMinute] = checkInTime.split(':').map(Number);
+            const [scheduleHour, scheduleMinute] = scheduleStart.split(':').map(Number);
+            
+            const checkInTotalMinutes = checkInHour * 60 + checkInMinute;
+            const scheduleTotalMinutes = scheduleHour * 60 + scheduleMinute;
+            
+            const lateMinutes = checkInTotalMinutes - scheduleTotalMinutes;
+            
+            return {
+                isLate: lateMinutes > 5,
+                lateMinutes: Math.max(0, lateMinutes),
+                scheduleStart: scheduleStart
+            };
+        }
+        
+        function getLearningDescription(teacherId, classId, status) {
+            const scheduleItem = allSchedule.find(s => s.teacherId === teacherId && s.classId === classId);
+            
+            if (scheduleItem && scheduleItem.learningDescription) {
+                return `
+                    <div class="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                        <div class="font-medium text-blue-900 mb-1">📝 Kegiatan Pembelajaran:</div>
+                        <div class="text-blue-800">${scheduleItem.learningDescription}</div>
+                    </div>
+                `;
+            } else if (status === 'hadir' || status === 'terlambat') {
+                return `
+                    <div class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">
+                        <div class="text-yellow-800">⏳ Menunggu deskripsi kegiatan pembelajaran...</div>
+                    </div>
+                `;
+            }
+            
+            return '';
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('id-ID', options);
+            
+            const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const dayName = dayNames[now.getDay()];
+            document.getElementById('dayName').textContent = dayName;
+        }
+
+        function renderSchedule() {
+            const tbody = document.getElementById('scheduleTable');
+            tbody.innerHTML = '';
+            
+            if (selectedClass === 'all') {
+                const classSections = {};
+                schedule.forEach(item => {
+                    if (!classSections[item.classId]) {
+                        classSections[item.classId] = [];
+                    }
+                    classSections[item.classId].push(item);
+                });
+                
+                Object.keys(classSections).forEach((classId, index) => {
+                    const className = classes[classId];
+                    const classItems = classSections[classId];
+                    
+                    const headerRow = document.createElement('tr');
+                    headerRow.className = 'bg-blue-50 border-b-2 border-blue-200';
+                    headerRow.innerHTML = `
+                        <td colspan="3" class="py-4 px-4 text-lg font-bold text-blue-900 text-center">
+                            <div class="flex items-center justify-center">
+                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h10M7 11h10M7 15h10"></path>
+                                </svg>
+                                KELAS ${className}
+                                <span class="ml-3 text-sm bg-blue-200 text-blue-800 px-3 py-1 rounded-full">${classItems.length} Jadwal</span>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(headerRow);
+                    
+                    classItems.forEach(item => {
+                        const teacher = teachers[item.teacherId];
+                        const row = document.createElement('tr');
+                        
+                        const isOverdue = checkIfOverdue(item.time, item.status);
+                        
+                        if (item.status === 'hadir') {
+                            row.className = 'border-b border-gray-100 bg-green-100 hover:bg-green-150';
+                        } else if (item.status === 'terlambat') {
+                            row.className = 'border-b border-gray-100 bg-yellow-100 hover:bg-yellow-150';
+                        } else if (item.status === 'selesai') {
+                            const lateInfo = checkLateArrival(item.checkIn, item.time);
+                            if (lateInfo.isLate) {
+                                row.className = 'border-b border-gray-100 bg-yellow-100 hover:bg-yellow-150';
+                            } else {
+                                row.className = 'border-b border-gray-100 bg-green-100 hover:bg-green-150';
+                            }
+                        } else if (item.status === 'tidak-hadir') {
+                            row.className = 'border-b border-gray-100 bg-red-100 hover:bg-red-150';
+                        } else if (isOverdue) {
+                            row.className = 'border-b border-gray-100 bg-red-100 hover:bg-red-150';
+                        } else {
+                            row.className = 'border-b border-gray-100 hover:bg-gray-50';
+                        }
+                        
+                        let statusBadge = getStatusBadge(item.status, item.checkIn, item.time);
+                        const learningDescription = getLearningDescription(item.teacherId, item.classId, item.status);
+                        
+                        row.innerHTML = `
+                            <td class="py-3 px-4 text-sm text-gray-900 pl-8">${item.time}</td>
+                            <td class="py-3 px-4">
+                                <div class="text-sm font-medium text-gray-900">${teacher.name}</div>
+                                <div class="text-sm text-gray-600">${teacher.subject}</div>
+                                <div class="text-xs text-gray-500 mt-1">Kelas ${className}</div>
+                                <div class="mt-2">${learningDescription}</div>
+                            </td>
+                            <td class="py-3 px-4">${statusBadge}</td>
+                        `;
+                        
+                        tbody.appendChild(row);
+                    });
+                    
+                    if (index < Object.keys(classSections).length - 1) {
+                        const spacerRow = document.createElement('tr');
+                        spacerRow.innerHTML = '<td colspan="3" class="py-2"></td>';
+                        tbody.appendChild(spacerRow);
+                    }
+                });
+            } else {
+                schedule.forEach(item => {
+                    const teacher = teachers[item.teacherId];
+                    const className = classes[item.classId];
+                    
+                    const row = document.createElement('tr');
+                    
+                    const isOverdue = checkIfOverdue(item.time, item.status);
+                    
+                    if (item.status === 'hadir') {
+                        row.className = 'border-b border-gray-100 bg-green-100 hover:bg-green-150';
+                    } else if (item.status === 'terlambat') {
+                        row.className = 'border-b border-gray-100 bg-yellow-100 hover:bg-yellow-150';
+                    } else if (item.status === 'selesai') {
+                        const lateInfo = checkLateArrival(item.checkIn, item.time);
+                        if (lateInfo.isLate) {
+                            row.className = 'border-b border-gray-100 bg-yellow-100 hover:bg-yellow-150';
+                        } else {
+                            row.className = 'border-b border-gray-100 bg-green-100 hover:bg-green-150';
+                        }
+                    } else if (item.status === 'tidak-hadir') {
+                        row.className = 'border-b border-gray-100 bg-red-100 hover:bg-red-150';
+                    } else if (isOverdue) {
+                        row.className = 'border-b border-gray-100 bg-red-100 hover:bg-red-150';
+                    } else {
+                        row.className = 'border-b border-gray-100 hover:bg-gray-50';
+                    }
+                    
+                    let statusBadge = getStatusBadge(item.status, item.checkIn, item.time);
+                    const learningDescription = getLearningDescription(item.teacherId, item.classId, item.status);
+                    
+                    row.innerHTML = `
+                        <td class="py-3 px-4 text-sm text-gray-900">${item.time}</td>
+                        <td class="py-3 px-4">
+                            <div class="text-sm font-medium text-gray-900">${teacher.name}</div>
+                            <div class="text-sm text-gray-600">${teacher.subject}</div>
+                            <div class="text-xs text-gray-500 mt-1">Kelas ${className}</div>
+                            <div class="mt-2">${learningDescription}</div>
+                        </td>
+                        <td class="py-3 px-4">${statusBadge}</td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                });
+            }
+        }
+        
+        function getStatusBadge(status, checkIn = null, scheduleTime = null) {
+            switch(status) {
+                case 'hadir':
+                    let hadirText = 'Sedang Mengajar';
+                    if (checkIn && scheduleTime) {
+                        const [scheduleStart] = scheduleTime.split('-');
+                        hadirText += ` (${checkIn})`;
+                    }
+                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><span class="status-indicator status-hadir"></span>${hadirText}</span>`;
+                case 'selesai':
+                    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><span class="status-indicator bg-blue-500"></span>Selesai</span>';
+                case 'terlambat':
+                    let lateText = 'Terlambat';
+                    if (checkIn && scheduleTime) {
+                        const lateInfo = checkLateArrival(checkIn, scheduleTime);
+                        lateText += ` (${lateInfo.lateMinutes} menit)`;
+                    }
+                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><span class="status-indicator status-keluar"></span>${lateText}</span>`;
+                case 'tidak-hadir':
+                    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><span class="status-indicator status-tidak-hadir"></span>Tidak Hadir</span>';
+                default:
+                    if (scheduleTime && checkIfOverdue(scheduleTime, status)) {
+                        const now = new Date();
+                        const currentTime = now.toTimeString().substring(0, 5);
+                        const [scheduleStart] = scheduleTime.split('-');
+                        const [currentHour, currentMinute] = currentTime.split(':').map(Number);
+                        const [scheduleHour, scheduleMinute] = scheduleStart.split(':').map(Number);
+                        const currentTotalMinutes = currentHour * 60 + currentMinute;
+                        const scheduleTotalMinutes = scheduleHour * 60 + scheduleMinute;
+                        const overdueMinutes = currentTotalMinutes - scheduleTotalMinutes;
+                        
+                        return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><span class="status-indicator status-tidak-hadir"></span>Terlambat ${overdueMinutes} menit</span>`;
+                    }
+                    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"><span class="status-indicator bg-gray-400"></span>Belum Dimulai</span>';
+            }
+        }
+
+        // Test connection on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(async () => {
+                try {
+                    const result = await getFromAppsScript('testConnection');
+                    if (result.success) {
+                        console.log('✅ Connected to Apps Script successfully');
+                        updateConnectionStatus('connected');
+                    } else {
+                        console.log('⚠️ Apps Script connection test failed:', result.message);
+                        updateConnectionStatus('error');
+                    }
+                } catch (error) {
+                    console.log('❌ Apps Script connection error:', error);
+                    updateConnectionStatus('error');
+                }
+            }, 2000);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+                event.preventDefault();
+                loadTodayAttendance();
+            }
+            
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault();
+                const startBtn = document.getElementById('startCameraBtn');
+                if (!startBtn.disabled) {
+                    startCamera();
+                }
+            }
+            
+            if (event.key === 'Escape') {
+                if (window.currentModal) {
+                    if (window.currentModal.querySelector('form')) {
+                        return;
+                    }
+                    closeTeacherDialog();
+                    closeSuccess();
+                    closeReportModal();
+                } else if (currentStream) {
+                    stopCamera();
+                }
+            }
+        });
+
+        // Periodic sync every 5 minutes
+        setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                loadTodayAttendance();
+            }
+        }, 5 * 60 * 1000);
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                setTimeout(() => {
+                    loadTodayAttendance();
+                }, 1000);
+            } else {
+                if (currentStream) {
+                    stopCamera();
+                }
+            }
+        });
+
+        console.log('🎓 SIALIM - Sistem Monitoring Kehadiran Guru');
+        console.log('📱 Apps Script URL:', APPS_SCRIPT_URL);
+        console.log('🔧 System initialized successfully');
+        console.log('⌨️ Keyboard shortcuts:');
+        console.log('   Ctrl/Cmd + R: Refresh data');
+        console.log('   Ctrl/Cmd + S: Start camera');
+        console.log('   Escape: Stop camera or close modals');
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a50042049f9ccb',t:'MTc1NzA2NzcwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
