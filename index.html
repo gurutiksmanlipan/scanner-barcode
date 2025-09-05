@@ -64,7 +64,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">EduTrack V2</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">EduTrack V3</h1>
                         <p class="text-sm text-gray-600">Sistem Monitoring Kehadiran Guru</p>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
-                            <p class="text-gray-500 text-sm">Klik tombol untuk mengaktifkan kamera</p>
+                            <p class="text-gray-500 text-sm">Klik "Aktifkan Kamera" untuk mulai scan QR code</p>
                         </div>
                         <div id="scanningIndicator" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white hidden">
                             <div class="text-center">
@@ -106,9 +106,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <input type="text" id="barcodeInput" placeholder="Atau ketik kode QR..." 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4">
                     
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <button id="startCameraBtn" onclick="startCamera()" 
@@ -127,14 +124,6 @@
                             Matikan Kamera
                         </button>
                     </div>
-                    
-                    <button onclick="processManualBarcode()" 
-                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        Proses Manual
-                    </button>
                     
                     <!-- Status Display -->
                     <div id="scanStatus" class="mt-4 p-4 rounded-lg hidden">
@@ -172,9 +161,7 @@
                             <thead>
                                 <tr class="border-b border-gray-200">
                                     <th class="text-left py-3 px-4 font-semibold text-gray-700">Jam</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Guru</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Mata Pelajaran</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Kelas</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Guru & Detail</th>
                                     <th class="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
                                 </tr>
                             </thead>
@@ -491,16 +478,6 @@
             updateCurrentDate();
             renderSchedule();
             
-            // Auto-focus barcode input
-            document.getElementById('barcodeInput').focus();
-            
-            // Handle Enter key in barcode input
-            document.getElementById('barcodeInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    processManualBarcode();
-                }
-            });
-            
             // Initialize barcode reader
             initializeBarcodeReader();
         });
@@ -714,7 +691,7 @@
                     const headerRow = document.createElement('tr');
                     headerRow.className = 'bg-blue-50 border-b-2 border-blue-200';
                     headerRow.innerHTML = `
-                        <td colspan="5" class="py-4 px-4 text-lg font-bold text-blue-900 text-center">
+                        <td colspan="3" class="py-4 px-4 text-lg font-bold text-blue-900 text-center">
                             <div class="flex items-center justify-center">
                                 <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h10M7 11h10M7 15h10"></path>
@@ -736,9 +713,11 @@
                         
                         row.innerHTML = `
                             <td class="py-3 px-4 text-sm text-gray-900 pl-8">${item.time}</td>
-                            <td class="py-3 px-4 text-sm font-medium text-gray-900">${teacher.name}</td>
-                            <td class="py-3 px-4 text-sm text-gray-600">${teacher.subject}</td>
-                            <td class="py-3 px-4 text-sm text-gray-600">${className}</td>
+                            <td class="py-3 px-4">
+                                <div class="text-sm font-medium text-gray-900">${teacher.name}</div>
+                                <div class="text-sm text-gray-600">${teacher.subject}</div>
+                                <div class="text-xs text-gray-500 mt-1">Kelas ${className}</div>
+                            </td>
                             <td class="py-3 px-4">${statusBadge}</td>
                         `;
                         
@@ -748,7 +727,7 @@
                     // Add spacing between classes (except last)
                     if (index < Object.keys(classSections).length - 1) {
                         const spacerRow = document.createElement('tr');
-                        spacerRow.innerHTML = '<td colspan="5" class="py-2"></td>';
+                        spacerRow.innerHTML = '<td colspan="3" class="py-2"></td>';
                         tbody.appendChild(spacerRow);
                     }
                 });
@@ -765,9 +744,11 @@
                     
                     row.innerHTML = `
                         <td class="py-3 px-4 text-sm text-gray-900">${item.time}</td>
-                        <td class="py-3 px-4 text-sm font-medium text-gray-900">${teacher.name}</td>
-                        <td class="py-3 px-4 text-sm text-gray-600">${teacher.subject}</td>
-                        <td class="py-3 px-4 text-sm text-gray-600">${className}</td>
+                        <td class="py-3 px-4">
+                            <div class="text-sm font-medium text-gray-900">${teacher.name}</div>
+                            <div class="text-sm text-gray-600">${teacher.subject}</div>
+                            <div class="text-xs text-gray-500 mt-1">Kelas ${className}</div>
+                        </td>
                         <td class="py-3 px-4">${statusBadge}</td>
                     `;
                     
@@ -820,23 +801,11 @@
             }, 2000);
         }
 
-        function processManualBarcode() {
-            const input = document.getElementById('barcodeInput');
-            const barcode = input.value.trim();
-            
-            if (!barcode) {
-                showStatus('error', 'Kode QR tidak boleh kosong', 'Silakan scan atau ketik kode QR');
-                return;
-            }
-            
-            processBarcodeData(barcode);
-            input.value = '';
-            input.focus();
-        }
+
 
         function processBarcodeData(barcode) {
             if (!barcode) {
-                showStatus('error', 'Kode QR tidak boleh kosong', 'Silakan scan atau ketik kode QR');
+                showStatus('error', 'Kode QR tidak boleh kosong', 'Silakan aktifkan kamera dan scan kode QR');
                 return;
             }
             
@@ -973,7 +942,8 @@
                     // Show confirmation dialog for ending class
                     showEndClassConfirmation(teacher, scannedClassName, currentTime, currentSchedule);
                 } else {
-                    showStatus('warning', 'Sudah tercatat lengkap', `${teacher.name} sudah melakukan check-in dan check-out untuk kelas ${scannedClassName}`);
+                    // Already completed - show session summary
+                    showCompletedSessionSummary(teacher, scannedClassName, currentSchedule);
                 }
                 
                 renderSchedule();
@@ -1116,7 +1086,7 @@
             renderSchedule();
             
             // Show ready message
-            showStatus('success', 'Siap untuk scan berikutnya', 'Silakan scan QR code atau aktifkan kamera untuk melanjutkan');
+            showStatus('success', 'Siap untuk scan berikutnya', 'Silakan aktifkan kamera untuk scan QR code');
         }
 
         // Helper function to find current schedule for a teacher
@@ -1391,6 +1361,256 @@
             
             window.currentScheduleToEnd = null;
         }
+        
+        // Function to show completed session summary
+        function showCompletedSessionSummary(teacher, className, schedule) {
+            const duration = calculateDuration(schedule.checkIn, schedule.checkOut);
+            const [scheduleStart, scheduleEnd] = schedule.time.split('-');
+            
+            // Calculate if teacher was early/late for start and end
+            const startInfo = checkLateArrival(schedule.checkIn, schedule.time);
+            const endTimeValidation = validateEndTime(schedule.checkOut, schedule.time);
+            
+            // Determine attendance quality
+            let attendanceQuality = 'Baik';
+            let qualityColor = 'green';
+            let qualityIcon = '✅';
+            
+            if (startInfo.isLate) {
+                attendanceQuality = 'Terlambat';
+                qualityColor = 'yellow';
+                qualityIcon = '⚠️';
+            } else if (startInfo.isEarly && startInfo.earlyMinutes > 15) {
+                attendanceQuality = 'Sangat Baik';
+                qualityColor = 'blue';
+                qualityIcon = '🌟';
+            }
+            
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4 max-h-96 overflow-y-auto">
+                    <div class="text-center mb-6">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+                            <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">📊 LAPORAN PEMBELAJARAN</h3>
+                        <p class="text-sm text-gray-600 mb-4">Sesi pembelajaran telah selesai. Berikut adalah ringkasan aktivitas Anda:</p>
+                    </div>
+                    
+                    <!-- Teacher & Class Info -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Guru</p>
+                                <p class="font-semibold text-gray-900">${teacher.name}</p>
+                                <p class="text-sm text-gray-600">${teacher.subject}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Kelas</p>
+                                <p class="font-semibold text-gray-900">${className}</p>
+                                <p class="text-sm text-gray-600">Jadwal: ${schedule.time}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Attendance Quality -->
+                    <div class="bg-${qualityColor}-50 border border-${qualityColor}-200 rounded-lg p-4 mb-4">
+                        <div class="flex items-center justify-center mb-2">
+                            <span class="text-2xl mr-2">${qualityIcon}</span>
+                            <span class="text-lg font-bold text-${qualityColor}-800">Kualitas Kehadiran: ${attendanceQuality}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Time Details -->
+                    <div class="space-y-3 mb-6">
+                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                </svg>
+                                Waktu Masuk Kelas
+                            </h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-500">Jadwal Mulai:</p>
+                                    <p class="font-medium">${scheduleStart}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">Waktu Masuk:</p>
+                                    <p class="font-medium ${startInfo.isLate ? 'text-red-600' : startInfo.isEarly ? 'text-blue-600' : 'text-green-600'}">${schedule.checkIn}</p>
+                                </div>
+                            </div>
+                            ${startInfo.isLate ? `
+                                <div class="mt-2 p-2 bg-red-50 rounded text-sm text-red-700">
+                                    ⚠️ Terlambat ${startInfo.lateMinutes} menit dari jadwal
+                                </div>
+                            ` : startInfo.isEarly && startInfo.earlyMinutes > 5 ? `
+                                <div class="mt-2 p-2 bg-blue-50 rounded text-sm text-blue-700">
+                                    🌟 Datang lebih awal ${startInfo.earlyMinutes} menit
+                                </div>
+                            ` : `
+                                <div class="mt-2 p-2 bg-green-50 rounded text-sm text-green-700">
+                                    ✅ Tepat waktu
+                                </div>
+                            `}
+                        </div>
+                        
+                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                </svg>
+                                Waktu Keluar Kelas
+                            </h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-500">Jadwal Selesai:</p>
+                                    <p class="font-medium">${scheduleEnd}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">Waktu Keluar:</p>
+                                    <p class="font-medium text-blue-600">${schedule.checkOut}</p>
+                                </div>
+                            </div>
+                            <div class="mt-2 p-2 bg-blue-50 rounded text-sm text-blue-700">
+                                ✅ Pembelajaran selesai dengan baik
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-900 mb-2 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Total Durasi Mengajar
+                            </h4>
+                            <p class="text-2xl font-bold text-blue-800">${duration}</p>
+                            <p class="text-sm text-gray-600">Dari ${schedule.checkIn} sampai ${schedule.checkOut}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="closeSessionSummary()" 
+                                class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                            Tutup
+                        </button>
+                        <button onclick="printSessionSummary('${teacher.name}', '${className}', '${schedule.time}', '${schedule.checkIn}', '${schedule.checkOut}', '${duration}')" 
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                            </svg>
+                            Cetak Laporan
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p class="text-sm text-green-700 text-center">
+                            <strong>✅ Status:</strong> Pembelajaran telah selesai dan tercatat dalam sistem
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+        
+        function closeSessionSummary() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+            
+            // Reset to initial state
+            setTimeout(() => {
+                resetToInitialState();
+            }, 500);
+        }
+        
+        function printSessionSummary(teacherName, className, scheduleTime, checkIn, checkOut, duration) {
+            const now = new Date();
+            const printDate = now.toLocaleDateString('id-ID', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            const printContent = `
+                <html>
+                <head>
+                    <title>Laporan Pembelajaran - ${teacherName}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+                        .info-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        .info-table td { padding: 10px; border: 1px solid #ddd; }
+                        .info-table .label { background-color: #f5f5f5; font-weight: bold; width: 30%; }
+                        .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #666; }
+                        .signature { margin-top: 50px; text-align: right; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>LAPORAN PEMBELAJARAN</h1>
+                        <h2>EduTrack - Sistem Monitoring Guru</h2>
+                        <p>${printDate}</p>
+                    </div>
+                    
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">Nama Guru</td>
+                            <td>${teacherName}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Kelas</td>
+                            <td>${className}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Jadwal</td>
+                            <td>${scheduleTime}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Waktu Masuk</td>
+                            <td>${checkIn}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Waktu Keluar</td>
+                            <td>${checkOut}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Total Durasi</td>
+                            <td><strong>${duration}</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="label">Status</td>
+                            <td><strong>SELESAI</strong></td>
+                        </tr>
+                    </table>
+                    
+                    <div class="signature">
+                        <p>Dicetak pada: ${now.toLocaleString('id-ID')}</p>
+                        <br><br>
+                        <p>_________________________</p>
+                        <p>Tanda Tangan Guru</p>
+                    </div>
+                    
+                    <div class="footer">
+                        <p>Dokumen ini digenerate otomatis oleh sistem EduTrack</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.print();
+        }
 
         function showCodeNotification(barcode) {
             // Create notification popup
@@ -1477,7 +1697,7 @@
         console.log('- XII2, XII3, XII4, XII5, XII6, XII7, XII8');
         console.log('');
         console.log('📝 CARA TESTING:');
-        console.log('1. Ketik "X1" di input manual atau scan QR code "X1"');
+        console.log('1. Klik "Aktifkan Kamera" dan scan QR code "X1"');
         console.log('2. Pilih nama guru dari daftar');
         console.log('3. Jika guru ada jadwal di kelas tersebut = berhasil absen');
         console.log('4. Jika guru tidak ada jadwal = tampil jadwal yang benar');
@@ -1501,5 +1721,5 @@
         console.log('3. Contoh: Jadwal 08:00-08:35, scan keluar jam 08:20 → Belum saatnya');
         console.log('4. Contoh: Jadwal 08:00-08:35, scan keluar jam 08:30 → Konfirmasi selesai');
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a41411777d9ccb',t:'MTc1NzA1ODAyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a42cfb51ec4112',t:'MTc1NzA1OTA0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
