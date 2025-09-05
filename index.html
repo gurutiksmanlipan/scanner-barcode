@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Monitoring Guru - EduTrack</title>
+    <title>Sistem Monitoring Guru - EduTrack V2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     <style>
@@ -856,6 +856,9 @@
         }
         
         function showTeacherSelectionDialog(scannedClassId, scannedClassName) {
+            // Stop camera when showing teacher selection
+            stopCamera();
+            
             // Create modal for teacher selection
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
@@ -888,6 +891,11 @@
                 document.body.removeChild(window.currentModal);
                 window.currentModal = null;
             }
+            
+            // Reset to initial state when canceling
+            setTimeout(() => {
+                resetToInitialState();
+            }, 500);
         }
         
         function processTeacherAttendance(teacherId, scannedClassId, scannedClassName) {
@@ -919,6 +927,12 @@
                 }
                 
                 renderSchedule();
+                
+                // Reset to initial state after successful attendance
+                setTimeout(() => {
+                    resetToInitialState();
+                }, 3000);
+                
             } else {
                 // Teacher doesn't have schedule in this class - show where they should be
                 const teacherSchedules = allSchedule.filter(s => s.teacherId === teacherId);
@@ -1025,6 +1039,34 @@
                 document.body.removeChild(window.currentModal);
                 window.currentModal = null;
             }
+            
+            // Reset to initial state after closing dialog
+            setTimeout(() => {
+                resetToInitialState();
+            }, 500);
+        }
+        
+        function resetToInitialState() {
+            // Clear barcode input
+            const barcodeInput = document.getElementById('barcodeInput');
+            barcodeInput.value = '';
+            barcodeInput.focus();
+            
+            // Hide status display
+            const statusDiv = document.getElementById('scanStatus');
+            statusDiv.classList.add('hidden');
+            
+            // Reset class selector to "all"
+            const classSelector = document.getElementById('classSelector');
+            classSelector.value = 'all';
+            selectedClass = 'all';
+            schedule = allSchedule;
+            
+            // Re-render schedule
+            renderSchedule();
+            
+            // Show ready message
+            showStatus('success', 'Siap untuk scan berikutnya', 'Silakan scan QR code atau aktifkan kamera untuk melanjutkan');
         }
 
         function showCodeNotification(barcode) {
@@ -1122,5 +1164,5 @@
         console.log('- Scan "X2" → Pilih guru manapun → Error (kelas tidak terdaftar)');
         console.log('- Scan "XI1" → Pilih "Wardani" → Salah kelas (seharusnya di XII1)');
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a3dc0ff524ce19',t:'MTc1NzA1NTczMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a3eb8b45f38802',t:'MTc1NzA1NjM2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
