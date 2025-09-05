@@ -64,7 +64,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">SIALIM VC</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">SIALIM V3</h1>
                         <p class="text-sm text-gray-600">Sistem Monitoring Kehadiran Guru</p>
                     </div>
                 </div>
@@ -1080,7 +1080,7 @@
                         </p>
                     </div>
                     
-                    <button onclick="closeSuccess()" 
+                    <button onclick="showLearningActivityForm('${teacher.name}', '${className}', '${currentTime}', '${timeStatus}')" 
                             class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
                         Selamat Mengajar!
                     </button>
@@ -1123,7 +1123,7 @@
                         </p>
                     </div>
                     
-                    <button onclick="closeSuccess()" 
+                    <button onclick="showLearningActivityForm('${teacher.name}', '${className}', '${currentTime}', 'Terlambat ${lateInfo.lateMinutes} menit')" 
                             class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
                         Mulai Mengajar
                     </button>
@@ -1135,6 +1135,185 @@
             
             // Also show status
             showStatus('warning', `${teacher.name} terlambat ${lateInfo.lateMinutes} menit`, `${className} - Jadwal: ${lateInfo.scheduleStart}, Masuk: ${currentTime}`);
+        }
+        
+        function showLearningActivityForm(teacherName, className, currentTime, timeStatus) {
+            // Close current modal first
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+            
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4">
+                    <div class="text-center mb-6">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+                            <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-blue-800 mb-2">📝 DESKRIPSI KEGIATAN PEMBELAJARAN</h3>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                            <p class="text-lg font-semibold text-blue-900 mb-1">${teacherName}</p>
+                            <p class="text-sm text-blue-700 mb-1">Kelas: <strong>${className}</strong></p>
+                            <p class="text-sm text-blue-700 mb-1">Waktu Masuk: <strong>${currentTime}</strong></p>
+                            <p class="text-sm text-blue-700">Status: <strong>${timeStatus}</strong></p>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">
+                            Silakan isi deskripsi singkat tentang kegiatan pembelajaran yang akan dilakukan hari ini.
+                        </p>
+                    </div>
+                    
+                    <form id="learningActivityForm" onsubmit="saveLearningActivity(event, '${teacherName}', '${className}', '${currentTime}', '${timeStatus}')">
+                        <div class="mb-6">
+                            <label for="activityDescription" class="block text-sm font-medium text-gray-700 mb-2">
+                                Deskripsi Kegiatan Pembelajaran <span class="text-red-500">*</span>
+                            </label>
+                            <textarea 
+                                id="activityDescription" 
+                                name="activityDescription" 
+                                rows="4" 
+                                required
+                                placeholder="Contoh: Menjelaskan materi tentang sistem pernapasan manusia, diskusi kelompok, dan latihan soal..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            ></textarea>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Minimal 10 karakter. Jelaskan secara singkat materi dan metode pembelajaran yang akan digunakan.
+                            </p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" onclick="cancelLearningActivity()" 
+                                    class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                                Batal
+                            </button>
+                            <button type="submit" 
+                                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                                Simpan & Mulai
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p class="text-sm text-blue-700 text-center">
+                            <strong>💡 Tips:</strong> Deskripsi ini akan tersimpan dalam laporan pembelajaran dan dapat dilihat oleh kepala sekolah.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+            
+            // Focus on textarea
+            setTimeout(() => {
+                document.getElementById('activityDescription').focus();
+            }, 100);
+        }
+        
+        function saveLearningActivity(event, teacherName, className, currentTime, timeStatus) {
+            event.preventDefault();
+            
+            const description = document.getElementById('activityDescription').value.trim();
+            
+            // Validation
+            if (description.length < 10) {
+                alert('Deskripsi kegiatan pembelajaran minimal 10 karakter!');
+                return;
+            }
+            
+            // Save the learning activity (in real app, this would be sent to server)
+            const learningActivity = {
+                teacher: teacherName,
+                class: className,
+                time: currentTime,
+                status: timeStatus,
+                description: description,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Store in localStorage for demo purposes
+            let activities = JSON.parse(localStorage.getItem('learningActivities') || '[]');
+            activities.push(learningActivity);
+            localStorage.setItem('learningActivities', JSON.stringify(activities));
+            
+            // Close modal
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+            
+            // Show success message
+            showLearningActivitySuccess(teacherName, className, description);
+        }
+        
+        function showLearningActivitySuccess(teacherName, className, description) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4">
+                    <div class="text-center mb-4">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                            <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-green-800 mb-2">✅ KEGIATAN PEMBELAJARAN TERSIMPAN!</h3>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                            <p class="text-lg font-semibold text-green-900 mb-2">${teacherName}</p>
+                            <p class="text-sm text-green-700 mb-2">Kelas: <strong>${className}</strong></p>
+                            <div class="text-left bg-white border border-green-200 rounded p-3 mt-3">
+                                <p class="text-xs text-green-600 font-medium mb-1">DESKRIPSI KEGIATAN:</p>
+                                <p class="text-sm text-gray-800">"${description}"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-green-700 text-center">
+                            <strong>🎯 Pembelajaran Dimulai!</strong><br>
+                            Deskripsi kegiatan telah tersimpan dalam sistem. Selamat mengajar!
+                        </p>
+                    </div>
+                    
+                    <button onclick="finishLearningActivity()" 
+                            class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                        Selamat Mengajar! 🎓
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+            
+            // Show status
+            showStatus('success', 'Kegiatan pembelajaran tersimpan', `${teacherName} - ${className}`);
+        }
+        
+        function cancelLearningActivity() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+            
+            // Reset to initial state
+            setTimeout(() => {
+                resetToInitialState();
+            }, 500);
+        }
+        
+        function finishLearningActivity() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+            
+            // Reset to initial state
+            setTimeout(() => {
+                resetToInitialState();
+            }, 500);
         }
         
         function closeSuccess() {
@@ -1998,5 +2177,5 @@
         console.log('3. Contoh: Jadwal 08:00-08:35, scan keluar jam 08:20 → Belum saatnya');
         console.log('4. Contoh: Jadwal 08:00-08:35, scan keluar jam 08:30 → Konfirmasi selesai');
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a48db8a6089ccb',t:'MTc1NzA2MzAwOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a4a7eb657c6141',t:'MTc1NzA2NDA4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
