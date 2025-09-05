@@ -64,7 +64,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">SIALIM VF</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">SIALIM VC1</h1>
                         <p class="text-sm text-gray-600">Sistem Monitoring Kehadiran Guru</p>
                     </div>
                 </div>
@@ -205,6 +205,129 @@
     </div>
 
     <script>
+//==============================	
+	// Konfigurasi Apps Script
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx2uztmmWzBC7keXAkOI4p8XaDd6QjXfNiW5iskMhQy07jpkCpc5_oiGBbeeaB87le9/exec';
+
+// Fungsi untuk mengirim data ke Apps Script
+async function sendToAppsScript(action, data) {
+    try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: action,
+                ...data
+            })
+        });
+        
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error sending to Apps Script:', error);
+        return { success: false, message: error.toString() };
+    }
+}
+
+// Update fungsi processTeacherAttendance di HTML
+async function processTeacherAttendance(teacherId, scannedClassId, scannedClassName) {
+    closeTeacherDialog();
+    
+    try {
+        // Kirim ke Apps Script untuk check-in
+        const result = await sendToAppsScript('processAttendance', {
+            qrCode: Object.keys(qrCodeToClassId).find(key => qrCodeToClassId[key] === scannedClassId),
+            teacherId: teacherId,
+            type: 'checkin'
+        });
+        
+        if (result.success) {
+            const teacher = teachers[teacherId];
+            const currentTime = new Date().toTimeString().substring(0, 5);
+            
+            if (result.data.isLate) {
+                showLateArrival(teacher, scannedClassName, currentTime, {
+                    lateMinutes: result.data.lateMinutes,
+                    scheduleStart: currentTime
+                });
+            } else {
+                showSuccess(teacher, scannedClassName, currentTime, 'Tepat waktu');
+            }
+            
+            // Update local schedule status
+            const currentSchedule = findCurrentSchedule(teacherId, scannedClassId, currentTime);
+            if (currentSchedule) {
+                currentSchedule.status = result.data.status;
+                currentSchedule.checkIn = result.data.checkInTime;
+                currentSchedule.attendanceId = result.data.attendanceId;
+            }
+            
+            renderSchedule();
+        } else {
+            showStatus('error', 'Error', result.message);
+        }
+        
+    } catch (error) {
+        console.error('Error processing attendance:', error);
+        showStatus('error', 'Error', 'Gagal memproses absensi: ' + error.message);
+    }
+}
+
+// Update fungsi saveLearningActivity
+async function saveLearningActivity(event, teacherName, className, currentTime, timeStatus) {
+    event.preventDefault();
+    
+    const description = document.getElementById('activityDescription').value.trim();
+    
+    if (description.length < 10) {
+        alert('Deskripsi kegiatan pembelajaran minimal 10 karakter!');
+        return;
+    }
+    
+    try {
+        // Cari attendance ID dari schedule yang sedang aktif
+        const teacherId = Object.keys(teachers).find(id => teachers[id].name === teacherName);
+        const classId = Object.keys(classes).find(id => classes[id] === className);
+        const currentSchedule = findCurrentSchedule(teacherId, classId, currentTime);
+        
+        if (currentSchedule && currentSchedule.attendanceId) {
+            const result = await sendToAppsScript('saveLearningActivity', {
+                attendanceId: currentSchedule.attendanceId,
+                description: description,
+                materials: '', // Bisa ditambah field lain
+                method: '',
+                studentResponse: '',
+                notes: ''
+            });
+            
+            if (result.success) {
+                // Update local data
+                currentSchedule.learningDescription = description;
+                
+                // Close modal dan show success
+                if (window.currentModal) {
+                    document.body.removeChild(window.currentModal);
+                    window.currentModal = null;
+                }
+                
+                showLearningActivitySuccess(teacherName, className, description);
+            } else {
+                alert('Error menyimpan kegiatan: ' + result.message);
+            }
+        } else {
+            alert('Data absensi tidak ditemukan');
+        }
+        
+    } catch (error) {
+        console.error('Error saving learning activity:', error);
+        alert('Error menyimpan kegiatan: ' + error.message);
+    }
+}
+
+//=============================================================
+	
         // Camera and scanner variables
         let codeReader = null;
         let currentStream = null;
