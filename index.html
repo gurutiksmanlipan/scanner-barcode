@@ -64,7 +64,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">EduTrack V4s</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">EduTrack BO</h1>
                         <p class="text-sm text-gray-600">Sistem Monitoring Kehadiran Guru</p>
                     </div>
                 </div>
@@ -210,39 +210,49 @@
         let currentStream = null;
         let isScanning = false;
         
-        // Complete teacher data from the schedule
+        // Complete teacher data from the official school database
         const teachers = {
-            'TCH001': { name: 'Elis Oktavia, S.Pd', subject: 'Biologi' },
-            'TCH002': { name: 'Wardani, S.Pd', subject: 'PJOK' },
-            'TCH003': { name: 'Yati Sumyati SR, S.Pd', subject: 'Fisika' },
-            'TCH004': { name: 'Fenty Indrianingsih, S.Pd', subject: 'B. Inggris Tingkat Lanjut' },
-            'TCH005': { name: 'Chandra Wiguna Umbara, S.Pd.', subject: 'B. Inggris' },
-            'TCH006': { name: 'Wawan Setiawan, S.Pd', subject: 'Ekonomi TL' },
-            'TCH007': { name: 'M. Aditia Apriadi, S.Pd', subject: 'PJOK' },
-            'TCH008': { name: 'Yayat Maskopo, S.Pd', subject: 'Matematika Wjb/TL' },
-            'TCH009': { name: 'Eva Fitriani, S.Pd.', subject: 'PPKn' },
-            'TCH010': { name: 'Liesda Aziza Zulfiani, S.Pd', subject: 'B. Inggris Tngkat Lanjut' },
-            'TCH011': { name: 'Muhamad Rahadiat, S.Si.', subject: 'Kimia' },
-            'TCH012': { name: 'Hidayat Rachman, S.PdI', subject: 'PAI' },
-            'TCH013': { name: 'A. Arsam Supratman, S.Pd', subject: 'Sejarah' },
-            'TCH014': { name: 'Dewi Wulansari, S.Pd', subject: 'B. Indonesia' },
-            'TCH015': { name: 'Aan Asep Saepudin, S.Pd', subject: 'Matematika Wjb' },
-            'TCH016': { name: 'Rizka Amalia Rahmawati, S.Pd', subject: 'Kimia' },
-            'TCH017': { name: 'Rima Amaliah, S.Pd', subject: 'Sejarah' },
-            'TCH018': { name: 'Encuk Sukari, S.Pd', subject: 'B. Indonesia' },
-            'TCH019': { name: 'Endang S., S.Pd', subject: 'B. Inggris Wjb' },
-            'TCH020': { name: 'Eman Suherman, M.Pd.', subject: 'Biologi' },
-            'TCH021': { name: 'Tina Hartinah Diniati, S. Pd', subject: 'Seni Budaya' },
-            'TCH022': { name: 'Asep Arif Suryadin, S.Pd', subject: 'PPKN' },
-            'TCH023': { name: 'Yenita Sari, SE', subject: 'PKWU' },
-            'TCH024': { name: 'Mulyana, S.E', subject: 'PKWU' },
-            'TCH025': { name: 'Bambang Irwandi, M.Pd.', subject: 'PJOK' },
-            'TCH026': { name: 'Elis Susanti, S.Pd', subject: 'B. Indonesia' },
-            'TCH027': { name: 'Eneng Wina, S.Pd', subject: 'Matematika Wjb/TL' },
-            'TCH028': { name: 'Rizalul Fikri, S.Pd.', subject: 'Geografi' },
-            'TCH029': { name: 'Misrini, S.Pd', subject: 'B. Inggris Wjb' },
-            'TCH030': { name: 'Fujiawati Suryanah H., S.Pd', subject: 'PAI' },
-            'TCH031': { name: 'Resty Dwi Asry, S.Pd', subject: 'Fisika' }
+            // Based on official teacher data with codes and subjects
+            'TCH001': { name: 'Elis Oktavia, S.Pd', subject: 'Biologi', nip: 'elis', code: '38b' },
+            'TCH002': { name: 'Wardani, S.Pd', subject: 'PJOK', nip: '.14', code: '15P' },
+            'TCH003': { name: 'Yati Sumyati SR, S.Pd', subject: 'Fisika', nip: 'yati', code: '33f' },
+            'TCH004': { name: 'Fenty Indrianingsih, S.Pd', subject: 'B. Inggris Tingkat Lanjut', nip: 'fenty', code: '35i' },
+            'TCH005': { name: 'Chandra Wiguna Umbara, S.Pd.', subject: 'B. Inggris', nip: '.04', code: '22i' },
+            'TCH006': { name: 'Wawan Setiawan, S.Pd', subject: 'Ekonomi TL', nip: '.21', code: '3e' },
+            'TCH007': { name: 'M. Aditia Apriadi, S.Pd', subject: 'PJOK', nip: '.48', code: '29P' },
+            'TCH008': { name: 'Yayat Maskopo, S.Pd', subject: 'Matematika Wjb/TL', nip: '.08', code: '8m' },
+            'TCH009': { name: 'Eva Fitriani, S.Pd.', subject: 'PPKn', nip: '.45', code: '23n' },
+            'TCH010': { name: 'Liesda Aziza Zulfiani, S.Pd', subject: 'B. Inggris Tingkat Lanjut', nip: 'eneng', code: '37i' },
+            'TCH011': { name: 'Muhamad Rahadiat, S.Si.', subject: 'Kimia', nip: '.03', code: '12k' },
+            'TCH012': { name: 'Hidayat Rachman, S.PdI', subject: 'PAI', nip: '.06', code: '6a' },
+            'TCH013': { name: 'A. Arsam Supratman, S.Pd', subject: 'Sejarah', nip: '.09', code: '20s' },
+            'TCH014': { name: 'Dewi Wulansari, S.Pd', subject: 'B. Indonesia', nip: '.42', code: '27i' },
+            'TCH015': { name: 'Aan Asep Saepudin, S.Pd', subject: 'Matematika Wjb', nip: '.06', code: '18w' },
+            'TCH016': { name: 'Rizka Amalia Rahmawati, S.Pd', subject: 'Kimia', nip: '.17', code: '9k' },
+            'TCH017': { name: 'Rima Amaliah, S.Pd', subject: 'Sejarah', nip: '.40', code: '31j' },
+            'TCH018': { name: 'Encuk Sukari, S.Pd', subject: 'B. Indonesia', nip: '.20', code: '26i' },
+            'TCH019': { name: 'Endang S., S.Pd', subject: 'B. Inggris Wjb', nip: '.11', code: '19i' },
+            'TCH020': { name: 'Eman Suherman, M.Pd.', subject: 'Biologi', nip: '.37', code: '25b' },
+            'TCH021': { name: 'Tina Hartinah Diniati, S. Pd', subject: 'Seni Budaya', nip: '.21', code: '11s' },
+            'TCH022': { name: 'Asep Arif Suryadin, S.Pd', subject: 'PPKN', nip: 'asep', code: '32n' },
+            'TCH023': { name: 'Yenita Sari, SE', subject: 'PKWU', nip: 'yenita', code: '34k' },
+            'TCH024': { name: 'Mulyana, S.E', subject: 'PKWU', nip: '.06', code: '21k' },
+            'TCH025': { name: 'Bambang Irwandi, M.Pd.', subject: 'PJOK', nip: '.06', code: '2p' },
+            'TCH026': { name: 'Elis Susanti, S.Pd', subject: 'B. Indonesia', nip: '.45', code: '28i' },
+            'TCH027': { name: 'Eneng Wina, S.Pd', subject: 'Matematika Wjb/TL', nip: 'eneng', code: '36w' },
+            'TCH028': { name: 'Rizalul Fikri, S.Pd.', subject: 'Geografi', nip: '.06', code: '24g' },
+            'TCH029': { name: 'Misrini, S.Pd', subject: 'B. Inggris Wjb', nip: '.19', code: '17i' },
+            'TCH030': { name: 'Fujiawati Suryanah H., S.Pd', subject: 'PAI', nip: '.47', code: '30p' },
+            'TCH031': { name: 'Resty Dwi Asry, S.Pd', subject: 'Fisika', nip: '.02', code: '13f' },
+            
+            // Additional teachers from the complete database
+            'TCH032': { name: 'Samsul Anam, S.Pd., M.Pd', subject: 'Kepala Sekolah', nip: '.10', code: '1' },
+            'TCH033': { name: 'Suhermin, M.Pd', subject: 'Koordinator BK', nip: '.16', code: '4' },
+            'TCH034': { name: 'Hj. Sunaryati, SE', subject: 'Ekonomi TL', nip: '.14', code: '5e' },
+            'TCH035': { name: 'Rapiudin, S.Pd', subject: 'BK Kelas X', nip: '.16', code: '7' },
+            'TCH036': { name: 'Dina Widya Erista, S.Pd.', subject: 'Geografi', nip: '.12', code: '10g' },
+            'TCH037': { name: 'Ratim, S.Kom', subject: 'Informatika', nip: '.09', code: '14T' },
+            'TCH038': { name: 'Indri Aprianti, S.Psi', subject: 'BK Kelas XII', nip: '.22', code: '16' }
         };
 
         const classes = {
@@ -1814,5 +1824,5 @@
         console.log('3. Contoh: Jadwal 08:00-08:35, scan keluar jam 08:20 → Belum saatnya');
         console.log('4. Contoh: Jadwal 08:00-08:35, scan keluar jam 08:30 → Konfirmasi selesai');
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a44450072c6045',t:'MTc1NzA2MDAwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a44b78d1ee6045',t:'MTc1NzA2MDI5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
