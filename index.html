@@ -64,7 +64,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">SMANLI</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">SMANLI 2</h1>
                         <p class="text-sm text-gray-600">Sistem Monitoring Kehadiran Guru</p>
                     </div>
                 </div>
@@ -1285,10 +1285,7 @@
             
             renderSchedule();
             
-            // Reset to initial state after successful attendance
-            setTimeout(() => {
-                resetToInitialState();
-            }, 4000);
+            // Don't auto-reset here - let the success modal handle it
         }
         
         function showSuccessWithMaterial(teacher, className, currentTime, timeStatus, lessonMaterial) {
@@ -1357,7 +1354,10 @@
             window.currentModal = modal;
             
             // Also show status
-            showStatus('success', `${teacher.name} berhasil masuk kelas`, `${className} - ${currentTime} (${timeStatus}) | Materi: ${lessonMaterial.topic}`);
+            const shortDescription = lessonMaterial.description.length > 30 
+                ? lessonMaterial.description.substring(0, 30) + '...' 
+                : lessonMaterial.description;
+            showStatus('success', `${teacher.name} berhasil masuk kelas`, `${className} - ${currentTime} (${timeStatus}) | Kegiatan: ${shortDescription}`);
         }
         
         function showLateArrivalWithMaterial(teacher, className, currentTime, lateInfo, lessonMaterial) {
@@ -1429,7 +1429,10 @@
             window.currentModal = modal;
             
             // Also show status
-            showStatus('warning', `${teacher.name} terlambat ${lateInfo.lateMinutes} menit`, `${className} - Jadwal: ${lateInfo.scheduleStart}, Masuk: ${currentTime} | Materi: ${lessonMaterial.topic}`);
+            const shortDescription = lessonMaterial.description.length > 30 
+                ? lessonMaterial.description.substring(0, 30) + '...' 
+                : lessonMaterial.description;
+            showStatus('warning', `${teacher.name} terlambat ${lateInfo.lateMinutes} menit`, `${className} - Jadwal: ${lateInfo.scheduleStart}, Masuk: ${currentTime} | Kegiatan: ${shortDescription}`);
         }
         
         function closeSuccessWithMaterial() {
@@ -1437,6 +1440,11 @@
                 document.body.removeChild(window.currentModal);
                 window.currentModal = null;
             }
+            
+            // Reset to initial state after closing success modal
+            setTimeout(() => {
+                resetToInitialState();
+            }, 500);
         }
         
         function processTeacherAttendance(teacherId, scannedClassId, scannedClassName) {
@@ -1977,26 +1985,11 @@
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                 </svg>
-                                Materi Pembelajaran
+                                Kegiatan Pembelajaran
                             </h4>
-                            <div class="space-y-2 text-sm">
-                                <div>
-                                    <span class="font-medium text-blue-800">Topik:</span>
-                                    <span class="text-blue-700 ml-2">${schedule.lessonMaterial.topic}</span>
-                                </div>
-                                ${schedule.lessonMaterial.subtopic !== '-' ? `
-                                    <div>
-                                        <span class="font-medium text-blue-800">Sub Materi:</span>
-                                        <span class="text-blue-700 ml-2">${schedule.lessonMaterial.subtopic}</span>
-                                    </div>
-                                ` : ''}
-                                <div>
-                                    <span class="font-medium text-blue-800">Kegiatan:</span>
-                                    <span class="text-blue-700 ml-2">${schedule.lessonMaterial.description}</span>
-                                </div>
-                                <div>
-                                    <span class="font-medium text-blue-800">Metode:</span>
-                                    <span class="text-blue-700 ml-2">${schedule.lessonMaterial.method}</span>
+                            <div class="text-sm">
+                                <div class="bg-white border border-blue-200 rounded p-3">
+                                    <span class="text-blue-700">${schedule.lessonMaterial.description}</span>
                                 </div>
                             </div>
                         </div>
@@ -2320,5 +2313,5 @@
         console.log('3. Contoh: Jadwal 08:00-08:35, scan keluar jam 08:20 → Belum saatnya');
         console.log('4. Contoh: Jadwal 08:00-08:35, scan keluar jam 08:30 → Konfirmasi selesai');
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a466bb35dd8802',t:'MTc1NzA2MTQxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a4722393098802',t:'MTc1NzA2MTg3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
