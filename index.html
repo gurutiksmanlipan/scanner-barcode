@@ -80,7 +80,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">SIALIMapan</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">SIALIMcolol</h1>
                         <p class="text-sm text-gray-600">Sistem Monitoring Kehadiran Guru</p>
                     </div>
                 </div>
@@ -406,6 +406,7 @@
                 }
                 
                 const result = await response.json();
+                // Always set to connected if we got a response, regardless of business logic success
                 updateConnectionStatus('connected');
                 return result;
             } catch (error) {
@@ -434,6 +435,7 @@
                 }
                 
                 const result = await response.json();
+                // Always set to connected if we got a response, regardless of business logic success
                 updateConnectionStatus('connected');
                 return result;
             } catch (error) {
@@ -931,6 +933,9 @@
                 closeLoadingModal();
                 
                 if (result.success) {
+                    // Maintain connection status as connected after successful operation
+                    updateConnectionStatus('connected');
+                    
                     const teacher = teachers[teacherId];
                     
                     if (actionType === 'checkin') {
@@ -959,6 +964,8 @@
                     
                     renderSchedule();
                 } else {
+                    // Keep connection as connected even if business logic fails
+                    updateConnectionStatus('connected');
                     showStatus('error', 'Error Absensi', result.message);
                     
                     if (result.teacherSchedules && result.teacherSchedules.length > 0) {
@@ -1187,6 +1194,8 @@
                     closeLoadingModal();
                     
                     if (result.success) {
+                        // Maintain connection status as connected after successful operation
+                        updateConnectionStatus('connected');
                         currentSchedule.learningDescription = description;
                         
                         if (window.currentModal) {
@@ -1196,6 +1205,8 @@
                         
                         showLearningActivitySuccess(teacherName, className, description);
                     } else {
+                        // Keep connection as connected even if business logic fails
+                        updateConnectionStatus('connected');
                         alert('Error menyimpan kegiatan: ' + result.message);
                     }
                 } else {
@@ -1694,5 +1705,5 @@
         console.log('   Ctrl/Cmd + S: Start camera');
         console.log('   Escape: Stop camera or close modals');
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a50042049f9ccb',t:'MTc1NzA2NzcwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a5759293f39ccb',t:'MTc1NzA3MjUwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
